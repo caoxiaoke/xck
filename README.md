@@ -7,8 +7,16 @@ b、遵循事件循环机制，当JS解析执行时，会被引擎分为两类�
 2、title的作用
 3、列表循环
 4、script是什么
+
 5、defer和async的区别
+
+
 6、DOMContentLoaded和window.onload的区别
+一、何时触发这两个事件？
+1、当 onload 事件触发时，页面上所有的DOM，样式表，脚本，图片，flash都已经加载完成了。
+2、当 DOMContentLoaded 事件触发时，仅当DOM加载完成，不包括样式表，图片，flash。
+
+
 7、盒模型是什么
 8、宽度不定，如何实现三个元素按照1：1：1布局
 9、介绍一下BFC
@@ -17,3 +25,8 @@ b、遵循事件循环机制，当JS解析执行时，会被引擎分为两类�
 12、setTimeout、Promise、Async、Await异步原理和执行顺序
 13、ES6的新增功能
 14、从输入url到页面加载发生了什么
+
+
+
+A、浏览器渲染过程与性能优化
+https://juejin.cn/post/6844904040346681358#heading-27
