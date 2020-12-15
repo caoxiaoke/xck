@@ -37,9 +37,48 @@ async 则是一个乱序执行的主,反正对它来说脚本的加载和执行�
 ## 宽度不定，如何实现三个元素按照1：1：1布局
 ## 介绍一下BFC
 ## DOM事件流的顺序
+DOM事件流包括三个阶段:
+事件捕获阶段
+处于目标阶段
+事件冒泡阶段
+
+事件捕获阶段 => 处于目标阶段 => 事件冒泡阶段
+在这个过程中可以使用event.stopPropagation();来阻止这个过程继续执行；
+而addEventListener（）的第三个参数为：true则表示将事件绑定在捕获阶段，false表示将事件绑定在冒泡阶段；
+
+捕获阶段：从window对象传导到目标节点（上层传到底层）称为“捕获阶段”（capture phase），捕获阶段不会响应任何事件；
+目标阶段：在目标节点上触发，称为“目标阶段”
+冒泡阶段：从目标节点传导回window对象（从底层传回上层），称为“冒泡阶段”（bubbling phase）。事件代理即是利用事件冒泡的机制把里层所需要响应的事件绑定到外层；
+
+![](https://img-blog.csdnimg.cn/2019011111581623.jpg)
+
+
 ## 事件委托
+1、可以大量节省内存占用，减少事件注册，比如在ul上代理所有li的click事件就非常棒
+2、可以实现当新增子对象时无需再次对其绑定（动态绑定事件）
+
 ## setTimeout、Promise、Async、Await异步原理和执行顺序
 ## ES6的新增功能
+1.Default Parameters（默认参数） in ES6
+2.Template Literals（模板对象） in ES6
+3.Multi-line Strings （多行字符串）in ES6
+4.Destructuring Assignment （解构赋值）in ES6
+5.Arrow Functions in（箭头函数） ES6
+6.Promises in ES6
+7.Block-Scoped Constructs Let and Const（块作用域let和const）
+8.Classes （类）in ES6
+9.Modules （模块）in ES6
+```html
+import虽然属于声明命令，但它是和export命令配合使用的。export命令用于规定模块的对外接口，import命令用于输入其他模块提供的功能。
+```
+
+ES6为字符串扩展了几个新的API：
+```html
+includes()：返回布尔值，表示是否找到了参数字符串。
+startsWith()：返回布尔值，表示参数字符串是否在原字符串的头部。
+endsWith()：返回布尔值，表示参数字符串是否在原字符串的尾部。 
+```
+
 ## 从输入url到页面加载发生了什么
 
 ## 浏览器渲染过程与性能优化
