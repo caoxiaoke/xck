@@ -102,3 +102,10 @@ https://juejin.cn/post/6844904040346681358#heading-27
 500 Internal Server Error  最常见的服务器端错误
 503 Service Unavailable 服务器端暂时无法处理请求（可能是过载或维护）
 ```
+
+## 性能分析 chrome devtool lighthouse
+
+## 前端页面加载阻塞渲染问题，如何解决？
+我认为阻塞页面渲染分为两方面：
+1、JS 加载问题
+2、CSS加载问题
