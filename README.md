@@ -262,8 +262,8 @@ StyleChange，如果CSS的属性发生变化了
 Dirty，几个Incremental的reflow发生在同一个frame的子树上
 
 **八、关闭TCP连接或继续保持连接**
-　　
-  通过四次挥手关闭连接(FIN ACK, ACK, FIN ACK, ACK)。
+
+通过四次挥手关闭连接(FIN ACK, ACK, FIN ACK, ACK)。
 
 　　![](https://images2015.cnblogs.com/blog/1034346/201703/1034346-20170329153945389-2019926409.png)
 
