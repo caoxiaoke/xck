@@ -147,9 +147,10 @@ https://juejin.cn/post/6844904040346681358#heading-27
 
 ![](https://img2018.cnblogs.com/blog/1659314/201908/1659314-20190822111456778-550471352.jpg)
 
-一、解析DOM树和CSSOM
+**一、解析DOM树和CSSOM
+**
 
-**1.HTML标签进行Dom树解析 **
+1.HTML标签进行Dom树解析 
 解析遇到link、script、img标签时，浏览器会向服务器发送请求资源。
 script的加载或者执行都会阻塞html解析、其他下载线程以及渲染线程。
 link加载完css后会解析为CSSOM(层叠样式表对象模型,一棵仅含有样式信息的树)。css的加载和解析不会阻塞html的解析，但会阻塞渲染。
