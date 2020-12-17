@@ -145,8 +145,7 @@ https://juejin.cn/post/6844904040346681358#heading-27
 
 ## 前端页面加载阻塞渲染问题，如何解决？
 
-**一、解析DOM树和CSSOM
-**
+一、解析DOM树和CSSOM
 
 1.HTML标签进行Dom树解析 
 解析遇到link、script、img标签时，浏览器会向服务器发送请求资源。
@@ -233,6 +232,76 @@ HTTP/2没有改变HTTP的基本语义和操作，各种操作方法（如GET/POS
 
 和HTTP/1一样，HTTP/2依旧还是保留了请求头、请求体以及响应体的部分。只不过在传输的时候被处理成了二进制的内容格式，同时把请求帧和响应帧区分开来了，两者可以单独发送。
 
+
+## 手撕 简版 Promise 
+
+```javascript
+let myPromise = function (executor) {
+    let self = this;//缓存一下this
+
+    self.status = 'pending';// 状态管理 状态的变化只能由pending变为resolved或者rejected。一件事情不能既成功又失败。所以resolved和rejected不能相互转化。
+    self.value = undefined;// 成功后的值 传给resolve
+    self.reason = undefined;//失败原因 传给reject
+
+    self.onResolvedCallbacks = [];// 存放then中成功的回调
+    self.onRejectedCallbacks = []; // 存放then中失败的回调 
+    // 这里说明一下，第三步使用定时器。执行完 new Promise 之后，会执行then方法，此时会把then中的方法缓存起来，并不执行：此时状态还是pending。等到定时器2秒之后，执行
+    // resolve|reject 时，而是依次执行存放在数组中的方法。 参考发布订阅模式
+
+    function resolve(value) {
+        // pending => resolved
+        if (self.status === 'pending') {
+            self.value = value;
+            self.status = 'resolved';
+            // 依次执行缓存的成功的回调
+            self.onResolvedCallbacks.forEach(fn => fn(self.value));
+        }
+    }
+
+    function reject(reason) {
+        // pending => rejected
+        if (self.status === 'pending') {
+            self.value = value;
+            self.status = 'rejected';
+            // 依次执行缓存的失败的回调
+            self.onRejectedCallbacks.forEach(fn => fn(self.reason));
+        }
+    }
+
+    try {
+        //new Promise 时 executor执行
+        executor(resolve, reject);
+    } catch (error) {
+        reject(error);// 当executor中执行有异常时，直接执行reject
+    }
+}
+
+// 每个Promise实例上都有then方法
+Promise.prototype.then = function (onFulfilled, onRejected) {
+    let self = this;
+
+    // 执行了 resolve
+    if (self.status === 'resolved') {
+        // 执行成功的回调
+        onFulfilled(self.value);
+    }
+
+    // 执行了 reject
+    if (self.status === 'rejected') {
+        // 执行失败的回调
+        onRejected(self.reason);
+    }
+
+    // new Promise中可以支持异步行为 当既不执行resolve又不执行reject时 状态是默认的等待态pending
+    if (self.status === 'pending') {
+        // 缓存成功的回调
+        self.onResolvedCallbacks.push(onFulfilled);
+        // 缓存失败的回调
+        self.onRejectedCallbacks.push(onRejected);
+    }
+};
+
+```
 ## 前端技术专家
 
 ![](https://static001.geekbang.org/resource/image/e0/92/e0c654fa7cf5f63cdcca1b6c51008992.jpeg)
