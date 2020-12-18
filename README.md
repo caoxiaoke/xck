@@ -119,9 +119,32 @@ endsWith()：返回布尔值，表示参数字符串是否在原字符串的尾�
 ## src和href区别
 href用于建立当前页面与引用资源之间的关系（链接），而src则会替换当前标签。遇到href，页面会并行加载后续内容；而src则不同，浏览器需要加载完毕src的内容才会继续往下走。
 
+## Cookie 安全性
+
+一、对保存到cookie里面的敏感信息必须加密
+
+二、设置HttpOnly为true
+1、该属性值的作用就是防止Cookie值被页面脚本读取。
+2、但是设置HttpOnly属性，HttpOnly属性只是增加了攻击者的难度，Cookie盗窃的威胁并没有彻底消除，因为cookie还是有可能传递的过程中被监听捕获后信息泄漏。
+
+三、设置Secure为true
+1、给Cookie设置该属性时，只有在https协议下访问的时候，浏览器才会发送该Cookie。
+2、把cookie设置为secure，只保证cookie与WEB服务器之间的数据传输过程加密，而保存在本地的cookie文件并不加密。如果想让本地cookie也加密，得自己加密数据。
+
+四、给Cookie设置有效期
+1、如果不设置有效期，万一用户获取到用户的Cookie后，就可以一直使用用户身份登录。
+2、在设置Cookie认证的时候，需要加入两个时间，一个是“即使一直在活动，也要失效”的时间，一个是“长时间不活动的失效时间”，并在Web应用中，首先判断两个时间是否已超时，再执行其他操作。
+
 ## XSRF攻击
+1、检测请求头中的Referer字段
+2、添加检验token
 
 ## XSS 攻击
+1、可以合理利用现有成熟框架、开启自带的HTML转义功能，过滤特殊字符。
+2、校验用户输入的特殊字符
+3、前端和服务端合作，阻止未转义特殊字符输出。
+4、尽量避免内联事件，尽量不要使用 <code>onLoad="onload('{{data}}')"</code>、<code>onClick="go('{{action}}')"</code> 这种拼接内联事件的写法。在 JavaScript 中通过 <code>.addEventlistener()</code> 事件绑定会更安全。
+5、避免拼接 HTML</strong>前端采用拼接 HTML 的方法比较危险，如果框架允许，使用 <code>createElement</code>、<code>setAttribute</code> 之类的方法实现。或者采用比较成熟的渲染框架，如 Vue/React 等。
 
 ## 浏览器缓存
 
