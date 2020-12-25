@@ -146,12 +146,15 @@ href用于建立当前页面与引用资源之间的关系（链接），而src�
 5、避免拼接 HTML</strong>前端采用拼接 HTML 的方法比较危险，如果框架允许，使用 <code>createElement</code>、<code>setAttribute</code> 之类的方法实现。或者采用比较成熟的渲染框架，如 Vue/React 等。
 
 ## 浏览器缓存
+强制缓存优先于协商缓存进行，若强制缓存(Expires和Cache-Control)生效则直接使用缓存，若不生效则进行协商缓存(Last-Modified / If-Modified-Since和Etag / If-None-Match)，协商缓存由服务器决定是否使用缓存，若协商缓存失效，那么代表该请求的缓存失效，重新获取请求结果，再存入浏览器缓存中；生效则返回304，继续使用缓存，主要过程如下：
+
+![](https://www.mwcxs.top/static/upload/pics/2019/1/30SX0D2hqApuJ7Z44y609Z3RKp.png)
+
+![](https://pics1.baidu.com/feed/bd3eb13533fa828bdc28583dc7e44d33950a5ae3.jpeg?token=e62e6b72e2053c46185f2ddf0532a861)
 
 ## get和post区别
 
 ## 重载重写区别，应用场景
-
-## http缓存讲一讲，如果本地缓存是有效的，那一定不会向服务器发送请求吗
 
 ## 手写代码 合并两个有序数组
 
