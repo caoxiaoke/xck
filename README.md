@@ -1,6 +1,7 @@
 # 前端日常总结大全
 
 ##CSS水平垂直居中
+
 1.position
 
     .center {
