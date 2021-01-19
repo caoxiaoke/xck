@@ -1,4 +1,172 @@
 # 前端日常总结大全
+
+##CSS水平垂直居中
+1.position
+
+    .center {
+        background: red;
+        width: 100px;
+        height: 100px;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+      } 
+    
+       /* or */
+    
+      .center {
+        background: red;
+        width: 100px;
+        height: 100px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin: -50px 0 0 -50px;
+      }
+
+元素宽高未知css
+
+    .center {
+        color: red;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+      }
+
+2.flex布局
+
+ ```html
+   <div class="wrap">
+      <div class="item">test</div>
+    </div>
+```
+    
+    .wrap {
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .item {
+        color: red;
+      }
+
+3.使用伪类
+```html
+<div class="wrap">
+  <div class="item">test</div>
+</div>
+```
+    .wrap {
+        width: 100%;
+        height: 100%;
+        background-color: #009ef4;
+        text-align: center;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+    
+      .wrap:after {
+        display: inline-block;
+        content: '';
+        width: 0;
+        height: 100%;
+        vertical-align: middle;
+      }
+    
+      .item {
+        color: red;
+        display: inline-block;
+        vertical-align: middle;
+      }
+4.使用表格
+```html
+  <div class="wrap">
+    <div class="item"> test</div>
+  </div>
+```
+  
+    .wrap {
+        width: 100%;
+        height: 100vh;
+        display: table;
+      }
+    
+      .item {
+        color: #F00;
+        display: table-cell;
+        vertical-align: middle;
+        text-align: center;
+      }
+##DOM渲染过程
+DOM渲染流程
+
+渲染引擎——webkit和Gecko
+       Firefox使用Geoko——Mozilla自主研发的渲染引擎
+       Safari和Chrome都使用webkit，Webkit是一款开源渲染引擎
+
+DOM渲染流程：
+
+　　 1、浏览器解析html源码，然后创建一个DOM树。
+在DOM树中，每一个HTML标签都有一个对应的节点(元素节点),并且每一个文本也都有一个对应的节点(文本节点)。DOM树的根节点就是documentElement，对应的是html标签。
+
+　　 2、浏览器解析CSS代码，计算出最终的样式数据。
+对CSS代码中非法的语法它会直接忽略掉。解析CSS的时候会按照如下顺序来定义优先级：浏览器默认设置，用户设置，外联样式，内联样式，html中的style(嵌在标签中的行间样式)。
+
+　　3、创建完DOM树并得到最终的样式数据之后，构建一个渲染树。
+渲染树和DOM树有点像，但是有区别。DOM树完全和html标签一一对应，而渲染树会忽略不需要渲染的元素(head、display:none的元素)。渲染树中每一个节点都存储着对应的CSS属性。
+
+　　4、当渲染树创建完成之后，浏览器就可以根据渲染树直接把页面绘制到屏幕上。
+  
+##作用域和作用域链
+一、作用域
+　　在 Javascript 中，作用域分为 全局作用域 和 函数作用域
+　　全局作用域：
+　　　　代码在程序的任何地方都能被访问，window 对象的内置属性都拥有全局作用域。
+ 　　函数作用域：
+　　　　在固定的代码片段才能被访问
+二、作用域链
+　　一般情况下，变量取值到 创建 这个变量 的函数的作用域中取值。
+　　但是如果在当前作用域中没有查到值，就会向上级作用域去查，直到查到全局作用域，这么一个查找过程形成的链条就叫做作用域链。
+
+##闭包&&原型链
+
+1. 闭包
+
+概念：闭包就是能够读取其他函数内部变量的函数。由于在Javascript语言中，只有函数内部的子函数才能读取局部变量，因此可以把闭包简单理解成“定义在一个函数内部的函数”。所以，在本质上，闭包就是将函数内部和函数外部连接起来的一座桥梁。
+
+例子：函数b就是一个闭包函数，用于获取函数a内部的变量i。当函数a的内部函数b，被函数a外的一个变量c引用的时候，就创建了一个闭包。
+
+作用：闭包可以用在许多地方。它的最大用处有两个
+
+可以读取函数内部的变量
+让这些变量的值始终保持在内存中
+注意事项：
+
+1）由于闭包会使得函数中的变量都被保存在内存中，内存消耗很大，所以不能滥用闭包，否则会造成网页的性能问题，在IE中可能导致内存泄露。解决方法是，在退出函数之前，将不使用的局部变量全部删除。
+
+ 2）闭包会在父函数外部，改变父函数内部变量的值。所以，如果你把父函数当作对象（object）使用，把闭包当作它的公用方法（Public Method），把内部变量当作它的私有属性（private value），这时一定要小心，不要随便改变父函数内部变量的值。
+
+2.原型链
+
+原型：所有的函数都有一个特殊的属性prototype(原型)，prototype属性是一个指针，指向的是一个对象(原型对象)，原型对象中的方法和属性都可以被函数的实例所共享。所谓的函数实例是指以函数作为构造函数创建的对象，这些对象实例都可以共享构造函数的原型的方法。
+
+原型链：原型链是用于查找引用类型（对象）的属性，查找属性会沿着原型链依次进行，如果找到该属性会停止搜索并做相应的操作，否则将会沿着原型链依次查找直到结尾。常见的应用是用在创建对象和继承中。
+
+## 盒模型
+CSS盒模型本质上是一个盒子，封装周围的HTML元素，它包括：边距，边框，填充，和实际内容。
+
+## 标准盒模型和怪异盒模型的区别
+
+ css盒模型本质是一个盒子，它由边距、边框、填充和实际内容组成。盒模型能够让我们在其他元素和周边元素边框之间的空间放置元素。
+标准盒与怪异盒的区别在于他们的总宽度的计算公式不一样。标准模式下总宽度=width+margin（左右）+padding（左右）border（左右）；怪异模式下总宽度=width+margin（左右）（就是说width已经包含了padding和border值）。标准模式下如果定义的DOCTYPE缺失，则在ie6、ie7、ie8下汇触发怪异模式。当设置为box-sizing:content-box时，将采用标准模式解析计算，也是默认模式；当设置为box-sizing:border-box时，将采用怪异模式解析计算;
+
 ## [JavaScript运行机制](https://baijiahao.baidu.com/s?id=1615713540466951098&wfr=spider&for=pchttp:// "JavaScript运行机制")
 1、JavaScript语言是单线程的，同一个时间只能做一件事；
 2、遵循事件循环机制，当JS解析执行时，会被引擎分为两类任务，同步任务（synchronous） 和 异步任务（asynchronous）。对于同步任务来说，会被推到执行栈按顺序去执行这些任务。对于异步任务来说，当其可以被执行时，会被放到一个 任务队列（task queue） 里等待JS引擎去执行。当执行栈中的所有同步任务完成后，JS引擎才会去任务队列里查看是否有任务存在，并将任务放到执行栈中去执行，执行完了又会去任务队列里查看是否有已经可以执行的任务。这种循环检查的机制，就叫做事件循环(Event Loop)。对于任务队列，其实是有更细的分类。其被分为 微任务（microtask）队列 & 宏任务（macrotask）队列。
