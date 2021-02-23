@@ -206,7 +206,10 @@ async 则是一个乱序执行的主,反正对它来说脚本的加载和执行�
         vertical-align: middle;
         text-align: center;
       }
-	  
+
+
+<br/>
+**css 三角形的实现**
 <br/>
 
 **盒模型**
@@ -234,29 +237,12 @@ css 盒模型本质是一个盒子，它由边距、边框、填充和实际内�
 **JS 实现深浅拷贝**
 
 ```html
-
-浅拷贝 // 1. ...实现 let copy1 = {...{x:1}} 
-
-// 2. Object.assign实现 
-let copy2 =Object.assign({}, {x:1}) 深拷贝
-
-// 1. JOSN.stringify() //JSON.parse() 
-
-let obj ={a: 1, b: {x: 3}} JSON.parse(JSON.stringify(obj)) 
-
-// 2. 递归拷贝 function
-
-	deepClone(obj) { 
-		let copy = obj instanceof Array ? [] : {}
-		for (let i in obj) {
-			if (obj.hasOwnProperty(i)) {
-				copy[i] = typeof obj[i] === 'object' ?
-				deepClone(obj[i]) : obj[i]
-			} 
-		}
-		return copy 
-	}
-
+浅拷贝 // 1. ...实现 let copy1 = {...{x:1}} // 2. Object.assign实现 let copy2
+=Object.assign({}, {x:1}) 深拷贝 // 1. JOSN.stringify() //JSON.parse() let obj
+={a: 1, b: {x: 3}} JSON.parse(JSON.stringify(obj)) // 2. 递归拷贝 function
+deepClone(obj) { let copy = obj instanceof Array ? [] : {} for (let i in obj) {
+if (obj.hasOwnProperty(i)) { copy[i] = typeof obj[i] === 'object' ?
+deepClone(obj[i]) : obj[i] } } return copy }
 ```
 
 **作用域和作用域链**
@@ -359,7 +345,6 @@ endsWith()：返回布尔值，表示参数字符串是否在原字符串的尾�
 
 href 用于建立当前页面与引用资源之间的关系（链接），而 src 则会替换当前标签。遇到 href，页面会并行加载后续内容；而 src 则不同，浏览器需要加载完毕 src 的内容才会继续往下走。
 
-
 **通过解析过程了解 JavaScript**
 
 什么是 Javascript 解析引擎？
@@ -438,7 +423,6 @@ this 值：（thisValue）：content object。this 值在进入上下文阶段�
 
 如下代码：
 
-
 ```
     var a=1;
     function b(a) {
@@ -448,7 +432,6 @@ this 值：（thisValue）：content object。this 值在进入上下文阶段�
     alert(b); // function b(a) { alert(a); }
     b();  //undefined
 ```
-
 
 变量对象/活动对象（VO/AO）填充及优先顺序
 
@@ -467,7 +450,6 @@ this 值：（thisValue）：content object。this 值在进入上下文阶段�
 
 其实 firebug 的控制台也算是 JavaScript 的解释器，而且他们会提示我们哪行出现了错误或者错误发生在哪个时期，语法检查阶段错误，还是运行期错误。
 
-
 ```
 如下：
 
@@ -476,7 +458,6 @@ this 值：（thisValue）：content object。this 值在进入上下文阶段�
     a=b=v // ReferenceError: v is not defined 运行期错误： v 是未定义的
     JavaScript错误信息)
 ```
-
 
 有如此详细的错误提示，是不是就很快就知道代码中到底是哪里错了呢！
 
@@ -509,7 +490,6 @@ Scope = [AO].concat([[Scope]]); //执行阶段，将 AO 添加到作用域链的
 保证查询有序的访问所有变量和函数
 作用域链感觉就是一个 VO 链表，当访问一个变量时，先在链表的第一个 VO 上查找，如果没有找到则继续在第二个 VO 上查找，直到搜索结束，也就是搜索到全局执行环境的 VO 中。这也就形成了作用域链的概念。
 
-
 ```
 var color="blue";
 function changecolor(){
@@ -533,7 +513,6 @@ alert("Color is now "+color);
 
 在介绍“预解析”阶段时，我们有提到当创建函数时，同时也会创建原型链对象（prototype）函数天生的。原型链对象在作用域链中没有找到变量对象时，那么就会通过原型链来查找。
 
-
 ```
 function Foo() {
 function bar() {
@@ -548,7 +527,6 @@ Foo(); // 10
 上例中在作用域链中遍历查询，到了全局对象了，该对象继承自 Object.prototype，因此，最终变量“x”的值就变成了 10。不过，在原型链上定义变量对象有些浏览器不支持，譬如 IE6，而且这样增加了变量对象的查询时间。所以变量声明尽量在调用函数 AO 里，即在用到该变量的函数内声明变量对象。
 
 作用域是在“预解析”时就已经决定的，所以作用域被叫做静态作用域，而在执行阶段的则被叫做动态链，因为在执行阶段会改变作用域链中填充的值。
-
 
 **手撕 简版 Promise**
 
@@ -622,7 +600,6 @@ Promise.prototype.then = function (onFulfilled, onRejected) {
 <br/>
 <br/>
 
-
 ## **性能优化问题 | 区域**
 
 **JS 更新 DOM 后页面及时渲染问题**
@@ -636,7 +613,6 @@ Promise.prototype.then = function (onFulfilled, onRejected) {
 采用 alert 语句进行提示，alert 语句会 block 住 js 线程，将执行权让给 gui 渲染线程，执行 alert 之后浏览器会把这个语句之前的所有对 dom 的操作都进行体现。这个方法虽然简单有效，但不具有可操作性，首先 alert 是简单粗暴的一种提示方式，反倒降低了用户体验，其次不能适用在各种场景中，不可能在系统中无缘无故地弹出个 alert 框只是为了强制重画更新的 dom。所以，该方法不值得推广。
 
 采用 setTimeout 方法，这是普遍的解决方案。把计算逻辑和隐藏提示的方法放在 setTimeout 里可以解决这个问题，因为 setTimeout 启用了一个定时器，指定在经过一段时间后执行某段逻辑，从而使这段逻辑跳离了当前函数体，使当前函数可以快速地执行完，之后如果 js 引擎线程中没有排队的任务，则 gui 渲染线程得到执行，showTip 相关的 dom 更新得到体现。当定时器到时后，js 线程又得到了新的任务，从而使计算逻辑和隐藏提示的操作得到执行。
-
 
 **前端页面加载阻塞渲染问题，如何解决？**
 
@@ -700,17 +676,15 @@ https://juejin.cn/post/6844904040346681358#heading-27
 <br/>
 <br/>
 
-
 ## **算法 | 区域**
 
-**经典的斐波那契数列：1，1，2，3，5，8，13……即从第三项起，每一项的值是前两项值的和。现在求第n项的值**
+**经典的斐波那契数列：1，1，2，3，5，8，13……即从第三项起，每一项的值是前两项值的和。现在求第 n 项的值**
 
 ```
 function fibonacci(n) { var n1 = 1, n2 = 1, sum; for (let i = 2; i < n; i++) {
 console.log(n1); sum = n1 + n2 n1 = n2 n2 = sum } return sum } fibonacci(30)
 
 ```
-
 
 ```
 var fibona = function (n) {
@@ -722,16 +696,16 @@ var fibona = function (n) {
 console.log(fibona(5)) // 3复制代
 ```
 
-根据递归的思想，首先设置递归的终止条件，就是n=1或者n=2的时候返回1。否则的话就重复调用自身，即第n项的值是第n-1和第n-2项的和，那么同理，第n-1项的值是第n-1-2和n-1-1项的值，依次类推，通过递归，最终都转化成了f(1)或f(2)的值相加。
+根据递归的思想，首先设置递归的终止条件，就是 n=1 或者 n=2 的时候返回 1。否则的话就重复调用自身，即第 n 项的值是第 n-1 和第 n-2 项的和，那么同理，第 n-1 项的值是第 n-1-2 和 n-1-1 项的值，依次类推，通过递归，最终都转化成了 f(1)或 f(2)的值相加。
 
 Tip：像斐波契数列这类的求值函数，计算量还是有些大的，所以我们完全可以做个缓存，在多次求相同的值的时候，我们可以直接从缓存取值。
 
 尾递归的原理：
 
      当编译器检测到一个函数调用是尾递归的时候，它就覆盖当前的活动记录而不是在栈中去创建一个新的。编译器可以做到这点，因为递归调用是当前活跃期内最后一条待执行的语句，于是当这个调用返回时栈帧中并没有其他事情可做，因此也就没有保存栈帧的必要了。通过覆盖当前的栈帧而不是在其之上重新添加一个，这样所使用的栈空间就大大缩减了，这使得实际的运行效率会变得更高。
-	 
-**以尾递归方式实现阶乘函数的实现：**
 
+
+**以尾递归方式实现阶乘函数的实现：**
 
 ```
 int facttail(int n, int res)
@@ -748,9 +722,40 @@ int facttail(int n, int res)
 
 ```
 
-<br/>
-<br/>
+**合并两个有序数组**
 
+```
+1、concat js的Array对象提供了一个叫concat()方法，连接两个或更多的数组，并返回结果。
+
+var c = a.concat(b); //c=[1,2,3,4,5,6];
+
+```
+
+```
+2、for循环
+
+for( var i in b)
+{
+  a.push(b[i]);
+}
+```
+
+```
+3、apply 函数的apply方法有一个特性，那就是func.apply(obj,argv)，argv是一个数组。所以我们可以利用这点，直上代码：
+a.push.apply(a,b);
+
+调用a.push这个函数实例的apply方法，同时把，b当作参数传入，这样a.push这个方法就会遍历b数组的所有元素，达到合并的效果。
+
+这里可能有点绕，我们可以把b看成[4,5,6]，变成这样：
+
+a.push.apply(a,[4,5,6]);
+然后上面的操作就等同于：
+
+a.push(4,5,6);
+```
+
+<br/>
+<br/>
 
 ## **网络安全 | 区域**
 
@@ -783,7 +788,6 @@ int facttail(int n, int res)
 4、尽量避免内联事件，尽量不要使用 <code>onLoad="onload('{{data}}')"</code>、<code>onClick="go('{{action}}')"</code> 这种拼接内联事件的写法。在 JavaScript 中通过 <code>.addEventlistener()</code> 事件绑定会更安全。
 5、避免拼接 HTML</strong>前端采用拼接 HTML 的方法比较危险，如果框架允许，使用 <code>createElement</code>、<code>setAttribute</code> 之类的方法实现。或者采用比较成熟的渲染框架，如 Vue/React 等。
 
-
 <br/>
 <br/>
 
@@ -813,33 +817,21 @@ HTTP/2 没有改变 HTTP 的基本语义和操作，各种操作方法（如 GET
 
 和 HTTP/1 一样，HTTP/2 依旧还是保留了请求头、请求体以及响应体的部分。只不过在传输的时候被处理成了二进制的内容格式，同时把请求帧和响应帧区分开来了，两者可以单独发送。
 
-
 **HTTP CODE 状态码**
 
 ```html
-
-100 Continue 继续，一般在发送post请求时，已发送了http header之后服务端将返回此信息，表示确认，之后发送具体参数信息 
-
-200 OK 正常返回信息
-
-201 Created 请求成功并且服务器创建了新的资源 202 Accepted服务器已接受请求，但尚未处理 301 Moved Permanently 请求的网页已永久移动到新位置.
-
-302 Found 临时性重定向 303 See Other 临时性重定向，且总是使用 GET 请求新的 URI.
-
-304 Not Modified 自从上次请求后，请求的网页未修改过 400 Bad Request服务器无法理解请求的格式，客户端不应当尝试再次使用相同的内容发起请求 
-
-401Unauthorized 请求未授权
-
-403 Forbidden 禁止访问 
-
-404 Not Found 找不到如何与 URI相匹配的资源 
-
-500 Internal Server Error 最常见的服务器端错误 
-
-503 ServiceUnavailable 服务器端暂时无法处理请求（可能是过载或维护）
-
+100 Continue 继续，一般在发送post请求时，已发送了http
+header之后服务端将返回此信息，表示确认，之后发送具体参数信息 200 OK 正常返回信息
+201 Created 请求成功并且服务器创建了新的资源 202
+Accepted服务器已接受请求，但尚未处理 301 Moved Permanently
+请求的网页已永久移动到新位置. 302 Found 临时性重定向 303 See Other
+临时性重定向，且总是使用 GET 请求新的 URI. 304 Not Modified
+自从上次请求后，请求的网页未修改过 400 Bad
+Request服务器无法理解请求的格式，客户端不应当尝试再次使用相同的内容发起请求
+401Unauthorized 请求未授权 403 Forbidden 禁止访问 404 Not Found 找不到如何与
+URI相匹配的资源 500 Internal Server Error 最常见的服务器端错误 503
+ServiceUnavailable 服务器端暂时无法处理请求（可能是过载或维护）
 ```
-
 
 **从输入 url 到页面加载发生了什么**
 
@@ -931,18 +923,13 @@ Etag：资源的实体标识（哈希字符串），当资源内容更新时，E
 
 1xx：指示信息–表示请求已接收，继续处理。
 
-
 2xx：成功–表示请求已被成功接收、理解、接受。
-
 
 3xx：重定向–要完成请求必须进行更进一步的操作。
 
-
 4xx：客户端错误–请求有语法错误或请求无法实现。
 
-
 5xx：服务器端错误–服务器未能实现合法的请求。
-
 
 响应头主要由 Cache-Control、 Connection、Date、Pragma 等组成。
 
@@ -1012,19 +999,17 @@ Dirty，几个 Incremental 的 reflow 发生在同一个 frame 的子树上
 
 ![](https://www.mwcxs.top/static/upload/pics/2019/1/30SX0D2hqApuJ7Z44y609Z3RKp.png)
 
-
 ## get 和 post 区别
 
 ## 重载重写区别，应用场景
 
-## 合并两个有序数组
-
-## css 三角形的实现
-
-
-<br/>
 <br/>
 
+**未完待续～**
+
+<br/>
+
+<br/>
 
 ## **闲聊 | 区域**
 
