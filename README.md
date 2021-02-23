@@ -17,7 +17,6 @@ Hi，大家好，这里是我的工作日常记录（总结）内容来自于众
 绝对定位 (absolute positioning)
 在绝对定位布局中，元素会整体脱离普通流，因此绝对定位元素不会对其兄弟元素造成影响，而元素具体的位置由绝对定位的坐标决定。
 
-
 **二、BFC 概念**
 
 Formatting context(格式化上下文) 是 W3C CSS2.1 规范中的一个概念。它是页面中的一块渲染区域，并且有一套渲染规则，它决定了其子元素将如何定位，以及和其他元素的关系和相互作用。
@@ -61,8 +60,6 @@ Safari 和 Chrome 都使用 webkit，Webkit 是一款开源渲染引擎
 渲染树和 DOM 树有点像，但是有区别。DOM 树完全和 html 标签一一对应，而渲染树会忽略不需要渲染的元素(head、display:none 的元素)。渲染树中每一个节点都存储着对应的 CSS 属性。
 
 4、当渲染树创建完成之后，浏览器就可以根据渲染树直接把页面绘制到屏幕上。
-
-
 
 **data-name、data-age 等 HTML5 自定义属性**
 
@@ -204,7 +201,7 @@ async 则是一个乱序执行的主,反正对它来说脚本的加载和执行�
         vertical-align: middle;
         text-align: center;
       }
-	  
+
 **盒模型**
 
 CSS 盒模型本质上是一个盒子，封装周围的 HTML 元素，它包括：边距，边框，填充，和实际内容。
@@ -217,7 +214,6 @@ css 盒模型本质是一个盒子，它由边距、边框、填充和实际内�
 
 标准盒与怪异盒的区别在于他们的总宽度的计算公式不一样。标准模式下总宽度=width+margin（左右）+padding（左右）border（左右）；怪异模式下总宽度=width+margin（左右）（就是说 width 已经包含了 padding 和 border 值）。标准模式下如果定义的 DOCTYPE 缺失，则在 ie6、ie7、ie8 下汇触发怪异模式。当设置为 box-sizing:content-box 时，将采用标准模式解析计算，也是默认模式；当设置为 box-sizing:border-box 时，将采用怪异模式解析计算;
 
-
 **宽度不定，如何实现三个元素按照 1：1：1 布局**
 
 父元素：display: flex;
@@ -228,12 +224,29 @@ css 盒模型本质是一个盒子，它由边距、边框、填充和实际内�
 **JS 实现深浅拷贝**
 
 ```html
-浅拷贝 // 1. ...实现 let copy1 = {...{x:1}} // 2. Object.assign实现 let copy2 =
-Object.assign({}, {x:1}) 深拷贝 // 1. JOSN.stringify()/JSON.parse() let obj =
-{a: 1, b: {x: 3}} JSON.parse(JSON.stringify(obj)) // 2. 递归拷贝 function
-deepClone(obj) { let copy = obj instanceof Array ? [] : {} for (let i in obj) {
-if (obj.hasOwnProperty(i)) { copy[i] = typeof obj[i] === 'object' ?
-deepClone(obj[i]) : obj[i] } } return copy }
+
+浅拷贝 // 1. ...实现 let copy1 = {...{x:1}} 
+
+// 2. Object.assign实现 
+let copy2 =Object.assign({}, {x:1}) 深拷贝
+
+// 1. JOSN.stringify() //JSON.parse() 
+
+let obj ={a: 1, b: {x: 3}} JSON.parse(JSON.stringify(obj)) 
+
+// 2. 递归拷贝 function
+
+deepClone(obj) { 
+	let copy = obj instanceof Array ? [] : {}
+	for (let i in obj) {
+		if (obj.hasOwnProperty(i)) {
+			copy[i] = typeof obj[i] === 'object' ?
+			deepClone(obj[i]) : obj[i]
+		} 
+	}
+	return copy 
+}
+
 ```
 
 **作用域和作用域链**
@@ -272,7 +285,6 @@ deepClone(obj[i]) : obj[i] } } return copy }
 
 原型链：原型链是用于查找引用类型（对象）的属性，查找属性会沿着原型链依次进行，如果找到该属性会停止搜索并做相应的操作，否则将会沿着原型链依次查找直到结尾。常见的应用是用在创建对象和继承中。
 
-
 **[JavaScript 运行机制](https://baijiahao.baidu.com/s?id=1615713540466951098&wfr=spider&for=pchttp:// "JavaScript运行机制")**
 
 1、JavaScript 语言是单线程的，同一个时间只能做一件事；
@@ -284,7 +296,6 @@ deepClone(obj[i]) : obj[i] } } return copy }
 
 1、当 onload 事件触发时，页面上所有的 DOM，样式表，脚本，图片，flash 都已经加载完成了。
 2、当 DOMContentLoaded 事件触发时，仅当 DOM 加载完成，不包括样式表，图片，flash。
-
 
 **DOM 事件流的顺序**
 
@@ -344,13 +355,11 @@ href 用于建立当前页面与引用资源之间的关系（链接），而 sr
 
 **斐波那契数列 [1, 1, 2, 3, 5, 8, 13, ...]，后一个数字是前两个数字之和**
 
-
 ```
 function fibonacci(n) { var n1 = 1, n2 = 1, sum; for (let i = 2; i < n; i++) {
 console.log(n1); sum = n1 + n2 n1 = n2 n2 = sum } return sum } fibonacci(30)
 
 ```
-
 
 ## **网络安全 | 区域**
 
@@ -383,9 +392,7 @@ console.log(n1); sum = n1 + n2 n1 = n2 n2 = sum } return sum } fibonacci(30)
 4、尽量避免内联事件，尽量不要使用 <code>onLoad="onload('{{data}}')"</code>、<code>onClick="go('{{action}}')"</code> 这种拼接内联事件的写法。在 JavaScript 中通过 <code>.addEventlistener()</code> 事件绑定会更安全。
 5、避免拼接 HTML</strong>前端采用拼接 HTML 的方法比较危险，如果框架允许，使用 <code>createElement</code>、<code>setAttribute</code> 之类的方法实现。或者采用比较成熟的渲染框架，如 Vue/React 等。
 
-
 ## **闲聊 | 区域**
-
 
 ## 浏览器缓存
 
