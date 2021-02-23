@@ -1,6 +1,6 @@
 # **前端日常总结大全**
 
-Hi，大家好，这里是我的工作日常记录（总结）内容来自于众多大佬，欢迎大家参观，主要内容分为：HTML（layout）、CSS、JS、性能优化问题、算法、网络安全、浏览器、闲聊。
+Hi，大家好，这里是我的工作日常记录（总结）部分内容来自于大佬，欢迎大家参观，主要内容分为：HTML（layout）、CSS、JS、性能优化问题、算法、网络安全、浏览器、闲聊。
 
 <br/>
 
@@ -92,6 +92,9 @@ defer 和 async 在网络读取（下载）这块儿是一样的,都是异步的
 async 则是一个乱序执行的主,反正对它来说脚本的加载和执行是紧紧挨着的,所以不管你声明的顺序如何,只要它加载完了就会立刻执行
 仔细想想,async 对于应用脚本的用处不大,因为它完全不考虑依赖（哪怕是最低级的顺序执行）,不过它对于那些可以不依赖任何脚本或不被任何脚本依赖的脚本来说却是非常合适的
 
+<br/>
+<br/>
+
 ## **CSS | 区域**
 
 **CSS 水平垂直居中**
@@ -122,7 +125,7 @@ async 则是一个乱序执行的主,反正对它来说脚本的加载和执行�
         margin: -50px 0 0 -50px;
       }
 
-元素宽高未知 css
+**元素宽高未知 css**
 
     .center {
         color: red;
@@ -132,7 +135,7 @@ async 则是一个乱序执行的主,反正对它来说脚本的加载和执行�
         transform: translate(-50%,-50%);
       }
 
-2.flex 布局
+**2.flex 布局**
 
 ```html
 <div class="wrap">
@@ -151,7 +154,7 @@ async 则是一个乱序执行的主,反正对它来说脚本的加载和执行�
         color: red;
       }
 
-3.使用伪类
+**3.使用伪类**
 
 ```html
 <div class="wrap">
@@ -183,7 +186,7 @@ async 则是一个乱序执行的主,反正对它来说脚本的加载和执行�
         vertical-align: middle;
       }
 
-4.使用表格
+**4.使用表格**
 
 ```html
 <div class="wrap">
@@ -203,6 +206,8 @@ async 则是一个乱序执行的主,反正对它来说脚本的加载和执行�
         vertical-align: middle;
         text-align: center;
       }
+	  
+<br/>
 
 **盒模型**
 
@@ -220,6 +225,9 @@ css 盒模型本质是一个盒子，它由边距、边框、填充和实际内�
 
 父元素：display: flex;
 子集：flex:1;
+
+<br/>
+<br/>
 
 ## **JS | 区域**
 
@@ -611,6 +619,10 @@ Promise.prototype.then = function (onFulfilled, onRejected) {
 };
 ```
 
+<br/>
+<br/>
+
+
 ## **性能优化问题 | 区域**
 
 **JS 更新 DOM 后页面及时渲染问题**
@@ -685,6 +697,9 @@ css 是由单独的下载线程异步下载的。
 
 https://juejin.cn/post/6844904040346681358#heading-27
 
+<br/>
+<br/>
+
 
 ## **算法 | 区域**
 
@@ -733,6 +748,10 @@ int facttail(int n, int res)
 
 ```
 
+<br/>
+<br/>
+
+
 ## **网络安全 | 区域**
 
 **Cookie 安全性**
@@ -765,6 +784,9 @@ int facttail(int n, int res)
 5、避免拼接 HTML</strong>前端采用拼接 HTML 的方法比较危险，如果框架允许，使用 <code>createElement</code>、<code>setAttribute</code> 之类的方法实现。或者采用比较成熟的渲染框架，如 Vue/React 等。
 
 
+<br/>
+<br/>
+
 ## **浏览器| HTTP | 区域**
 
 **HTTP 1.0 和 HTTP2.0 的区别**
@@ -795,16 +817,27 @@ HTTP/2 没有改变 HTTP 的基本语义和操作，各种操作方法（如 GET
 **HTTP CODE 状态码**
 
 ```html
-100 Continue 继续，一般在发送post请求时，已发送了http
-header之后服务端将返回此信息，表示确认，之后发送具体参数信息 200 OK 正常返回信息
-201 Created 请求成功并且服务器创建了新的资源 202 Accepted
-服务器已接受请求，但尚未处理 301 Moved Permanently 请求的网页已永久移动到新位置
-302 Found 临时性重定向 303 See Other 临时性重定向，且总是使用 GET 请求新的 URI
-304 Not Modified 自从上次请求后，请求的网页未修改过 400 Bad Request
-服务器无法理解请求的格式，客户端不应当尝试再次使用相同的内容发起请求 401
-Unauthorized 请求未授权 403 Forbidden 禁止访问 404 Not Found 找不到如何与 URI
-相匹配的资源 500 Internal Server Error 最常见的服务器端错误 503 Service
-Unavailable 服务器端暂时无法处理请求（可能是过载或维护）
+
+100 Continue 继续，一般在发送post请求时，已发送了http header之后服务端将返回此信息，表示确认，之后发送具体参数信息 
+
+200 OK 正常返回信息
+
+201 Created 请求成功并且服务器创建了新的资源 202 Accepted服务器已接受请求，但尚未处理 301 Moved Permanently 请求的网页已永久移动到新位置.
+
+302 Found 临时性重定向 303 See Other 临时性重定向，且总是使用 GET 请求新的 URI.
+
+304 Not Modified 自从上次请求后，请求的网页未修改过 400 Bad Request服务器无法理解请求的格式，客户端不应当尝试再次使用相同的内容发起请求 
+
+401Unauthorized 请求未授权
+
+403 Forbidden 禁止访问 
+
+404 Not Found 找不到如何与 URI相匹配的资源 
+
+500 Internal Server Error 最常见的服务器端错误 
+
+503 ServiceUnavailable 服务器端暂时无法处理请求（可能是过载或维护）
+
 ```
 
 
@@ -898,13 +931,18 @@ Etag：资源的实体标识（哈希字符串），当资源内容更新时，E
 
 1xx：指示信息–表示请求已接收，继续处理。
 
+
 2xx：成功–表示请求已被成功接收、理解、接受。
+
 
 3xx：重定向–要完成请求必须进行更进一步的操作。
 
+
 4xx：客户端错误–请求有语法错误或请求无法实现。
 
+
 5xx：服务器端错误–服务器未能实现合法的请求。
+
 
 响应头主要由 Cache-Control、 Connection、Date、Pragma 等组成。
 
@@ -983,7 +1021,10 @@ Dirty，几个 Incremental 的 reflow 发生在同一个 frame 的子树上
 
 ## css 三角形的实现
 
+
 <br/>
+<br/>
+
 
 ## **闲聊 | 区域**
 
