@@ -105,6 +105,33 @@
         vertical-align: middle;
         text-align: center;
       }
+      
+## JS实现深浅拷贝
+
+浅拷贝
+// 1. ...实现
+let copy1 = {...{x:1}}
+ 
+// 2. Object.assign实现
+ 
+let copy2 = Object.assign({}, {x:1})
+
+深拷贝
+// 1. JOSN.stringify()/JSON.parse()
+let obj = {a: 1, b: {x: 3}}
+JSON.parse(JSON.stringify(obj))
+ 
+// 2. 递归拷贝
+function deepClone(obj) {
+  let copy = obj instanceof Array ? [] : {}
+  for (let i in obj) {
+    if (obj.hasOwnProperty(i)) {
+      copy[i] = typeof obj[i] === 'object' ? deepClone(obj[i]) : obj[i]
+    }
+  }
+  return copy
+}
+
 ## 斐波那契数列 [1, 1, 2, 3, 5, 8, 13, ...]，后一个数字是前两个数字之和
 ```html
 function fibonacci(n) {
