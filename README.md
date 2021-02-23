@@ -105,6 +105,20 @@
         vertical-align: middle;
         text-align: center;
       }
+## 斐波那契数列 [1, 1, 2, 3, 5, 8, 13, ...]，后一个数字是前两个数字之和
+```html
+function fibonacci(n) {
+    var n1 = 1, n2 = 1, sum;
+    for (let i = 2; i < n; i++) { console.log(n1);
+        sum = n1 + n2
+        n1 = n2
+        n2 = sum
+    }
+    return sum
+}
+fibonacci(30)
+```
+
 ## DOM渲染过程
 DOM渲染流程
 
