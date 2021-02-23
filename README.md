@@ -1,6 +1,6 @@
 # **前端日常总结大全**
 
-Hi，大家好，这里是我的工作日常记录（总结）内容来自于众多大佬，欢迎大家参观，主要内容分为：HTML（layout）、CSS、JS、性能优化问题、算法、网络安全、闲聊。
+Hi，大家好，这里是我的工作日常记录（总结）内容来自于众多大佬，欢迎大家参观，主要内容分为：HTML（layout）、CSS、JS、性能优化问题、算法、网络安全、浏览器、闲聊。
 
 ## **HTML（layout）| 区域**
 
@@ -349,15 +349,385 @@ endsWith()：返回布尔值，表示参数字符串是否在原字符串的尾�
 
 href 用于建立当前页面与引用资源之间的关系（链接），而 src 则会替换当前标签。遇到 href，页面会并行加载后续内容；而 src 则不同，浏览器需要加载完毕 src 的内容才会继续往下走。
 
+
+**通过解析过程了解 JavaScript**
+
+什么是 Javascript 解析引擎？
+Javascript 解析引擎（简称 Javascript 引擎），是一个程序，是浏览器引擎的一个部分。
+
+每个浏览器的 Javascript 解析引擎都不相同（因为每个浏览器编写 Javascript 解析引擎的语言（C 或者 C++）以及解析原理都不相同）。标准的 Javascript 解析引擎会按照 ECMAScript 文档来实现。虽然每个浏览器的 Javascript 解析引擎不同，但 Javascript 的语言性质决定了 Javascript 关键的渲染原理仍然是动态执行 Javascript 字符串。只是词法分析、语法分析、变量赋值、字符串拼接的实现方式有所不同。
+
+JavaScript 解析引擎到底是干什么的？
+JavaScript 解析引擎就是根据 ECMAScript 定义的语言标准来动态执行 JavaScript 字符串。虽然之前说现在很多浏览器不全是按照标准来的，解释机制也不尽相同，但动态解析 JS 的过程还是分成两个阶段：语法检查阶段和运行阶段。
+
+语法检查包括词法分析和语法分析，运行阶段又包括预解析和运行阶段（像 V8 引擎会将 JavaScript 字符串编译成二进制代码，此过程应该归到语法检查过程中）。
+
+JavaScript 解析过程
+在 JavaScript 解析过程中，如遇错误就直接跳出当前代码块，直接执行下一个 script 代码段。所以在同一个 script 内的代码段有错误的话就不会执行下去，但是不会影响下一个 script 内的代码段。
+
+第一阶段：语法检查
+语法检查也是 JavaScript 解析器的工作之一，包括 词法分析 和 语法分析，过程大致如下：
+
+一：词法分析
+词法分析：JavaScript 解释器先把 JavaScript 代码（字符串）的字符流按照 ECMAScript 标准转换为记号流。
+
+```
+例如：把字符流：
+
+a = (b - c);
+转换为记号流：
+
+NAME "a"
+EQUALS
+OPEN_PARENTHESIS
+NAME "b"
+MINUS
+NAME "c"
+CLOSE_PARENTHESIS
+SEMICOLON
+```
+
+二：语法分析
+语法分析：JavaScript 语法分析器在经过词法分析后，将记号流按照 ECMAScript 标准把词法分析所产生的记号生成语法树。
+通俗地说就是把从程序中收集的信息存储到数据结构中，每取一个词法记号，就送入语法分析器进行分析。
+
+语法分析不做的事：去掉注释，自动生成文档，提供错误位置（可以通过记录行号来提供）。ECMAScript 标准如下：
+
+var，if，else，break，continue 等是 JavaScript 的关键词
+abstract，int，long 等是 JavaScript 保留词
+怎么样算是数字、怎么样算是字符串等等
+定义了操作符（+，-，=）等操作符
+定义了 JavaScript 的语法
+定义了对表达式，语句等标准的处理算法，比如遇到==该如何处理
+……
+当语法检查正确无误之后，就可以进入运行阶段了。
+
+第二阶段：运行阶段
+一：预解析
+第一步：JavaScript 引擎将语法检查正确后生成的语法树复制到当前执行上下文中。
+第二步：JavaScript 引擎会对语法树当中的变量声明、函数声明以及函数的形参进行属性填充。
+
+“预解析”从语法检查阶段复制过来的信息如下：
+
+内部变量表 varDecls：varDecls 保存的用 var 进行显式声明的局部变量。
+内嵌函数表 funDecls：在“预解析”阶段，发现有函数定义的时候，除了记录函数的声明外，还会创建一个原型链对象（prototype）。
+…其他的信息。
+执行上下文（execution context）
+
+（一）预解析阶段创建的执行上下文包括：变量对象、作用域链、this
+
+变量对象（Variable Object）：由 var declaration、function declaration（变量声明、函数声明）、arguments（参数）构成。变量对象是以单例形式存在。
+作用域链（Scope Chain）：variable object + all parent scopes（变量对象以及所有父级作用域）构成。
+this 值：（thisValue）：content object。this 值在进入上下文阶段就确定了。一旦进入执行代码阶段，this 值就不会变了。
+（二）“预解析”阶段创建执行上下文之后，还会对变量对象/活动对象（VO/AO）的一些属性填充数值。
+
+函数的形参：执行上下文的变量对象的一个属性，其属性名就是形参的名字，其值就是实参的值；对于没有传递的参数，其值为 undefined。
+函数声明：执行上下文的变量对象的一个属性，属性名和值都是函数对象创建出来的；如果变量对象已经包含了相同名字的属性，则会替换它的值。
+变量声明：执行上下文的变量对象的一个属性，其属性名即为变量名，其值为 undefined；如果变量名和已经声明的函数名或者函数的参数名相同，则不会影响已经存在的函数声明的属性，该声明会被忽略掉，但其包含的赋值操作不会忽略。
+变量对象/活动对象（VO/AO）填充的顺序也是按照以上顺序：函数的形参->函数声明->变量声明；在变量对象/活动对象（VO/AO）中权重高低也按照函数的形参->函数声明->变量声明顺序来。
+
+如下代码：
+
+
+```
+    var a=1;
+    function b(a) {
+        alert(a);
+    }
+    var b;
+    alert(b); // function b(a) { alert(a); }
+    b();  //undefined
+```
+
+
+变量对象/活动对象（VO/AO）填充及优先顺序
+
+以上代码在进入执行上下文时，按照函数的形参->函数声明->变量声明顺序来填充，并且优先权永远都是函数的形参>函数声明>变量声明，所以只要 alert(a)中的 a 是函数中的形参，就永远不会被函数和变量声明覆盖。就算没有赋值也是默认填充的 undefined 值。
+
+第二部分：执行代码
+经过“预解析”创建执行上下文之后，就进入执行代码阶段，VO/AO 就会重新赋予真实的值，“预解析”阶段赋予的 undefined 值会被覆盖。
+
+此阶段才是程序真正进入执行阶段，Javascript 引擎会一行一行的读取并运行代码。此时那些变量都会重新赋值。
+
+假如变量是定义在函数内的，而函数从头到尾都没被激活（调用）的话，则变量值永远都是 undefined 值。
+
+进入了执行代码阶段，在“预解析”阶段所创建的任何东西可能都会改变，不仅仅是 VO/AO，this 和作用域链也会因为某些语句而改变，后面会讲到。
+
+了解完 Javascript 的解析过程最后我们再来了解下 firebug 的控制台对 Javascript 的报错提示吧。
+
+其实 firebug 的控制台也算是 JavaScript 的解释器，而且他们会提示我们哪行出现了错误或者错误发生在哪个时期，语法检查阶段错误，还是运行期错误。
+
+
+```
+如下：
+
+    alert(var);// SyntaxError: syntax error 语法分析阶段错误 ：语法错误
+    var=1;; // SyntaxError: missing variable name 语法分析阶段错误 ：var是保留字符，导致变量名丢失
+    a=b=v // ReferenceError: v is not defined 运行期错误： v 是未定义的
+    JavaScript错误信息)
+```
+
+
+有如此详细的错误提示，是不是就很快就知道代码中到底是哪里错了呢！
+
+接下来我们详细来介绍执行上下文中的一个重要概念——作用域链。
+
+作用域链（Scope Chain）
+
+作用域链是处理标识符时进行变量查询的变量对象列表，每个执行上下文都有自己的变量对象：对于全局上下文而言，其变量对象就是全局对象本身；对于函数而言，其变量对象就是活动对象。
+
+作用域链以及执行上下文的关系
+
+在 Javascript 中只有函数能规定作用域，全局执行上下文中的 Scope 是全局上下文中的属性，也是最外层的作用域链。
+
+函数的属性[[Scope]]是在“预解析”的时候就已经存在的了，它包含了所有上层变量对象，并一直保存在函数中。就算函数永远都没被激活（调用），[[Scope]]也都还是存在函数对象上。
+
+创建执行上下文的 Scope 属性和进入执行上下文的过程如下：
+
+Scope = AO + [[Scope]] //预解析时的 Scope 属性
+Scope = [AO].concat([[Scope]]); //执行阶段，将 AO 添加到作用域链的最前端
+执行上下文定义的 Scope 属性变化过程
+
+执行上下文中的[AO]是函数的活动对象，而[[Scope]]则是该函数属性作用域。当前函数的 AO 永远是在最前面的，保存在堆栈上，而每当函数激活的时候，这些 AO 都会压栈到该堆栈上，查询变量是先从栈顶开始查找，也就是说作用域链的栈顶永远是当前正在执行的代码所在环境的 VO/AO（当函数调用结束后，则会从栈顶移除）。
+
+通俗点讲就是：JavaScript 解释器通过作用域链将不同执行位置上的变量对象串连成列表，并借助这个列表帮助 JavaScript 解释器检索变量的值。作用域链相当于一个索引表，并通过编号来存储它们的嵌套关系。当 JavaScript 解释器检索变量的值，会按着这个索引编号进行快速查找，直到找到全局对象为止，如果没有找到值，则传递一个特殊的 undefined 值。
+
+是不是又想到了一条 JavaScript 高效准则：为什么说在该函数内定义的变量，能减少函数嵌套能提高 JavaScript 的效率？因为函数定义的变量，此变量永远在栈顶，这样子查询变量的时间变短了。
+
+作用域的特性
+
+保证查询有序的访问所有变量和函数
+作用域链感觉就是一个 VO 链表，当访问一个变量时，先在链表的第一个 VO 上查找，如果没有找到则继续在第二个 VO 上查找，直到搜索结束，也就是搜索到全局执行环境的 VO 中。这也就形成了作用域链的概念。
+
+
+```
+var color="blue";
+function changecolor(){
+var anothercolor="red";
+function swapcolors(){
+var tempcolor=anothercolor;
+anothercolor=color;
+color=tempcolor; // Todo something
+}
+swapcolors();
+}
+changecolor();//这里不能访问 tempcolor 和 anocolor;但是可以访问 color;
+alert("Color is now "+color);
+```
+
+作用域链保护变量安全
+
+函数的作用域是在函数创建即“预解析”阶段就已经就已经定义了，而在代码执行阶段则是将函数的作用域添加到作用域链上。
+
+原型链查询
+
+在介绍“预解析”阶段时，我们有提到当创建函数时，同时也会创建原型链对象（prototype）函数天生的。原型链对象在作用域链中没有找到变量对象时，那么就会通过原型链来查找。
+
+
+```
+function Foo() {
+function bar() {
+alert(x);
+}
+bar();
+}
+Object.prototype.x = 10;
+Foo(); // 10
+```
+
+上例中在作用域链中遍历查询，到了全局对象了，该对象继承自 Object.prototype，因此，最终变量“x”的值就变成了 10。不过，在原型链上定义变量对象有些浏览器不支持，譬如 IE6，而且这样增加了变量对象的查询时间。所以变量声明尽量在调用函数 AO 里，即在用到该变量的函数内声明变量对象。
+
+作用域是在“预解析”时就已经决定的，所以作用域被叫做静态作用域，而在执行阶段的则被叫做动态链，因为在执行阶段会改变作用域链中填充的值。
+
+
+**手撕 简版 Promise**
+
+```javascript
+let myPromise = function (executor) {
+  let self = this; //缓存一下this
+
+  self.status = "pending"; // 状态管理 状态的变化只能由pending变为resolved或者rejected。一件事情不能既成功又失败。所以resolved和rejected不能相互转化。
+  self.value = undefined; // 成功后的值 传给resolve
+  self.reason = undefined; //失败原因 传给reject
+
+  self.onResolvedCallbacks = []; // 存放then中成功的回调
+  self.onRejectedCallbacks = []; // 存放then中失败的回调
+  // 这里说明一下，第三步使用定时器。执行完 new Promise 之后，会执行then方法，此时会把then中的方法缓存起来，并不执行：此时状态还是pending。等到定时器2秒之后，执行
+  // resolve|reject 时，而是依次执行存放在数组中的方法。 参考发布订阅模式
+
+  function resolve(value) {
+    // pending => resolved
+    if (self.status === "pending") {
+      self.value = value;
+      self.status = "resolved";
+      // 依次执行缓存的成功的回调
+      self.onResolvedCallbacks.forEach((fn) => fn(self.value));
+    }
+  }
+
+  function reject(reason) {
+    // pending => rejected
+    if (self.status === "pending") {
+      self.value = value;
+      self.status = "rejected";
+      // 依次执行缓存的失败的回调
+      self.onRejectedCallbacks.forEach((fn) => fn(self.reason));
+    }
+  }
+
+  try {
+    //new Promise 时 executor执行
+    executor(resolve, reject);
+  } catch (error) {
+    reject(error); // 当executor中执行有异常时，直接执行reject
+  }
+};
+
+// 每个Promise实例上都有then方法
+Promise.prototype.then = function (onFulfilled, onRejected) {
+  let self = this;
+
+  // 执行了 resolve
+  if (self.status === "resolved") {
+    // 执行成功的回调
+    onFulfilled(self.value);
+  }
+
+  // 执行了 reject
+  if (self.status === "rejected") {
+    // 执行失败的回调
+    onRejected(self.reason);
+  }
+
+  // new Promise中可以支持异步行为 当既不执行resolve又不执行reject时 状态是默认的等待态pending
+  if (self.status === "pending") {
+    // 缓存成功的回调
+    self.onResolvedCallbacks.push(onFulfilled);
+    // 缓存失败的回调
+    self.onRejectedCallbacks.push(onRejected);
+  }
+};
+```
+
 ## **性能优化问题 | 区域**
+
+**JS 更新 DOM 后页面及时渲染问题**
+
+深入研究浏览器内核可以发现，浏览器内核是多线程的，其中一个常驻线程叫 javascript 引擎线程，负责执行 js 代码，还有一个常驻线程叫 GUI 渲染线程，负责页面渲染，dom 重画等操作。javascript 引擎是基于事件驱动单线程执行的，js 线程一直在等待着任务列表中的任务到来，而 js 线程与 gui 渲染线程是互斥的，当 js 线程执行时，渲染线程呈挂起状态，只有当 js 线程空闲时渲染线程才会执行。所以，我们可以理解为什么 dom 更新总是不能被立刻执行。就我们的代码来说，显示提示和隐藏提示的 dom 操作都被浏览器记下来了并放在 gui 渲染线程的任务队列中，但都没有立刻进行渲染，而是在当前函数完成后（js 线程已处于空闲状态），进行最终的 dom 渲染，而我们的用户则基本感受不到这个过程，因为经过 show 和 hide 两个相反的操作，相当于 dom 完全没变。
+
+![](https://img-blog.csdn.net/20131116163500734)
+
+浏览器的行为虽然是合理的，但却给我们带来了麻烦，怎么才能强制浏览器执行 dom 更新的操作以满足我们的业务需要，给用户友好的提示呢，有两种方法：
+
+采用 alert 语句进行提示，alert 语句会 block 住 js 线程，将执行权让给 gui 渲染线程，执行 alert 之后浏览器会把这个语句之前的所有对 dom 的操作都进行体现。这个方法虽然简单有效，但不具有可操作性，首先 alert 是简单粗暴的一种提示方式，反倒降低了用户体验，其次不能适用在各种场景中，不可能在系统中无缘无故地弹出个 alert 框只是为了强制重画更新的 dom。所以，该方法不值得推广。
+
+采用 setTimeout 方法，这是普遍的解决方案。把计算逻辑和隐藏提示的方法放在 setTimeout 里可以解决这个问题，因为 setTimeout 启用了一个定时器，指定在经过一段时间后执行某段逻辑，从而使这段逻辑跳离了当前函数体，使当前函数可以快速地执行完，之后如果 js 引擎线程中没有排队的任务，则 gui 渲染线程得到执行，showTip 相关的 dom 更新得到体现。当定时器到时后，js 线程又得到了新的任务，从而使计算逻辑和隐藏提示的操作得到执行。
+
+
+**前端页面加载阻塞渲染问题，如何解决？**
+
+一、解析 DOM 树和 CSSOM
+
+1.HTML 标签进行 Dom 树解析
+解析遇到 link、script、img 标签时，浏览器会向服务器发送请求资源。
+script 的加载或者执行都会阻塞 html 解析、其他下载线程以及渲染线程。
+link 加载完 css 后会解析为 CSSOM(层叠样式表对象模型,一棵仅含有样式信息的树)。css 的加载和解析不会阻塞 html 的解析，但会阻塞渲染。
+img 的加载不会阻塞 html 的解析，但 img 加载后并不渲染，它需要等待 Render Tree 生成完后才和 Render Tree 一起渲染出来。未下载完的图片需等下载完后才渲染。
+
+2.CSS 语法进行 CSS 树解析
+CSS 解释器将 CSS 进行解释然后解析
+划重点！！！Dom 树和 CSSOM 两者不是解析完再渲染的，而是边解析边进行渲染的！
+DOM 树和 CSSOM 渲染完成后合并生成 Render 树
+布局（reflow 重排发生在这个阶段）
+布局（reflow 重排发生在这个阶段）
+
+这个阶段是通过递归调用进行布局的，引擎计算各元素的尺寸大小，进行布局树绘制
+
+触发重排：
+
+页面首次渲染
+浏览器窗口大小变化
+元素尺寸、位置、内容、字体大小发生变化
+添加或删除可见的元素
+激活伪类时
+
+绘制（repainting 重绘发生在这个阶段）
+触发重绘：改变元素颜色、背景、visibility、outline 等属性
+
+重排一定会触发重绘，重绘不一定会触发重排 。
+
+阻塞问题总结
+阻塞发生的情况：
+遇到 script 标签加载 js 的时候会加载 js 并且执行完毕才开始渲染
+遇到 alert 会阻塞
+css 也会阻塞
+css 是由单独的下载线程异步下载的。
+
+总结：
+1.css 加载不会阻塞 DOM 树的解析
+2.css 加载会阻塞 DOM 树（render 树）的渲染
+3.css 加载会阻塞后面 js 语句的执行
+
+为了避免让用户看到长时间的白屏时间，我们应该尽可能的提高 css 加载速度，比如可以使用以下几种方法:
+
+使用 CDN(因为 CDN 会根据你的网络状况，替你挑选最近的一个具有缓存内容的节点为你提供资源，因此可以减少加载时间)
+对 css 进行压缩(可以用很多打包工具，比如 webpack,gulp 等，也可以通过开启 gzip 压缩)
+合理的使用缓存(设置 cache-control,expires,以及 E-tag 都是不错的，不过要注意一个问题，就是文件更新后，你要避免缓存而带来的影响。其中一个解决防范是在文件名字后面加一个版本号)
+减少 http 请求数，将多个 css 文件合并，或者是干脆直接写成内联样式(内联样式的一个缺点就是不能缓存)
+
+![](https://img2018.cnblogs.com/blog/1659314/201908/1659314-20190822111456778-550471352.jpg)
+
+**性能分析 chrome devtool lighthouse**
+
+**浏览器渲染过程与性能优化**
+
+https://juejin.cn/post/6844904040346681358#heading-27
+
 
 ## **算法 | 区域**
 
-**斐波那契数列 [1, 1, 2, 3, 5, 8, 13, ...]，后一个数字是前两个数字之和**
+**经典的斐波那契数列：1，1，2，3，5，8，13……即从第三项起，每一项的值是前两项值的和。现在求第n项的值**
 
 ```
 function fibonacci(n) { var n1 = 1, n2 = 1, sum; for (let i = 2; i < n; i++) {
 console.log(n1); sum = n1 + n2 n1 = n2 n2 = sum } return sum } fibonacci(30)
+
+```
+
+
+```
+var fibona = function (n) {
+    // 如果求第一项或者第二项，则直接返回1
+    if (n === 1 || n === 2) return 1;
+    // 否则的话，返回前两项的和
+    return fibona(n - 1) + fibona(n - 2);
+}
+console.log(fibona(5)) // 3复制代
+```
+
+根据递归的思想，首先设置递归的终止条件，就是n=1或者n=2的时候返回1。否则的话就重复调用自身，即第n项的值是第n-1和第n-2项的和，那么同理，第n-1项的值是第n-1-2和n-1-1项的值，依次类推，通过递归，最终都转化成了f(1)或f(2)的值相加。
+
+Tip：像斐波契数列这类的求值函数，计算量还是有些大的，所以我们完全可以做个缓存，在多次求相同的值的时候，我们可以直接从缓存取值。
+
+尾递归的原理：
+
+     当编译器检测到一个函数调用是尾递归的时候，它就覆盖当前的活动记录而不是在栈中去创建一个新的。编译器可以做到这点，因为递归调用是当前活跃期内最后一条待执行的语句，于是当这个调用返回时栈帧中并没有其他事情可做，因此也就没有保存栈帧的必要了。通过覆盖当前的栈帧而不是在其之上重新添加一个，这样所使用的栈空间就大大缩减了，这使得实际的运行效率会变得更高。
+	 
+**以尾递归方式实现阶乘函数的实现：**
+
+
+```
+int facttail(int n, int res)
+{
+    if (n < 0)
+        return 0;
+    else if(n == 0)
+        return 1;
+    else if(n == 1)
+        return res;
+    else
+        return facttail(n - 1, n *res);
+}
 
 ```
 
@@ -392,27 +762,51 @@ console.log(n1); sum = n1 + n2 n1 = n2 n2 = sum } return sum } fibonacci(30)
 4、尽量避免内联事件，尽量不要使用 <code>onLoad="onload('{{data}}')"</code>、<code>onClick="go('{{action}}')"</code> 这种拼接内联事件的写法。在 JavaScript 中通过 <code>.addEventlistener()</code> 事件绑定会更安全。
 5、避免拼接 HTML</strong>前端采用拼接 HTML 的方法比较危险，如果框架允许，使用 <code>createElement</code>、<code>setAttribute</code> 之类的方法实现。或者采用比较成熟的渲染框架，如 Vue/React 等。
 
-## **闲聊 | 区域**
 
-## 浏览器缓存
+## **浏览器| HTTP | 区域**
 
-强制缓存优先于协商缓存进行，若强制缓存(Expires 和 Cache-Control)生效则直接使用缓存，若不生效则进行协商缓存(Last-Modified / If-Modified-Since 和 Etag / If-None-Match)，协商缓存由服务器决定是否使用缓存，若协商缓存失效，那么代表该请求的缓存失效，重新获取请求结果，再存入浏览器缓存中；生效则返回 304，继续使用缓存，主要过程如下：
+**HTTP 1.0 和 HTTP2.0 的区别**
 
-![](https://pics1.baidu.com/feed/bd3eb13533fa828bdc28583dc7e44d33950a5ae3.jpeg?token=e62e6b72e2053c46185f2ddf0532a861)
+HTTP/2 没有改变 HTTP 的基本语义和操作，各种操作方法（如 GET/POST/HEAD 等）、请求头和请求体机制都没有改变，不同的只是传输的方式改变了。HTTP/1.x 协议以换行符作为纯文本的分隔符，而 HTTP/2 将所有传输的信息分割为更小的消息和帧，并采用二进制格式对它们编码。
 
-![](https://www.mwcxs.top/static/upload/pics/2019/1/30SX0D2hqApuJ7Z44y609Z3RKp.png)
+**HTTP/2 的主要功能特性**
 
-## get 和 post 区别
+将 HTTP 协议中的纯文本传输修改成了二进制帧传输，分为头部帧和数据帧。
+使用 HPCAK 对头部数据压缩，添加头部索引减少重复头部数据传输。
+添加数据优先级，针对不同的数据源建立不同的优先级树，确保优先级高的数据不会被阻塞。
+请求响应的复用，同一个数据流中可以同时以不同的顺序发送多个不同的帧，每个数据源只产生一个连接。
+流控制，阻止发送方向接收方发送的大量数据，通过请求窗口限制请求速率。
+服务端推送，打破严格的请求-响应机制，服务端也可以主动推送数据到客户端。
 
-## 重载重写区别，应用场景
+**HTTP/2 数据传输的基本元素**
 
-## 手写代码 合并两个有序数组
+新的 HTTP/2 协议通过二进制帧来传输数据，改变了客户端与服务器之间交换数据的方式，主要涉及了三个概念：
 
-## css 垂直居中的实现
+帧：HTTP/2 数据传输的基本单位，通过把原始的文本数据处理成二进制帧来发送。
+消息：逻辑请求和响应构成的统一整体就是消息。
+数据流：建立的 TCP 连接，承载发送一条和多条消息。
+帧和消息
 
-## css 三角形的实现
+和 HTTP/1 一样，HTTP/2 依旧还是保留了请求头、请求体以及响应体的部分。只不过在传输的时候被处理成了二进制的内容格式，同时把请求帧和响应帧区分开来了，两者可以单独发送。
 
-## 从输入 url 到页面加载发生了什么
+
+**HTTP CODE 状态码**
+
+```html
+100 Continue 继续，一般在发送post请求时，已发送了http
+header之后服务端将返回此信息，表示确认，之后发送具体参数信息 200 OK 正常返回信息
+201 Created 请求成功并且服务器创建了新的资源 202 Accepted
+服务器已接受请求，但尚未处理 301 Moved Permanently 请求的网页已永久移动到新位置
+302 Found 临时性重定向 303 See Other 临时性重定向，且总是使用 GET 请求新的 URI
+304 Not Modified 自从上次请求后，请求的网页未修改过 400 Bad Request
+服务器无法理解请求的格式，客户端不应当尝试再次使用相同的内容发起请求 401
+Unauthorized 请求未授权 403 Forbidden 禁止访问 404 Not Found 找不到如何与 URI
+相匹配的资源 500 Internal Server Error 最常见的服务器端错误 503 Service
+Unavailable 服务器端暂时无法处理请求（可能是过载或维护）
+```
+
+
+**从输入 url 到页面加载发生了什么**
 
 这是一道经典的面试题，这道题没有一个标准的答案，它涉及很多的知识点，面试官会通过这道题了解你对哪一方面的知识比较擅长，然后继续追问看看你的掌握程度。当然我写的这些也只是我的一些简单的理解，从前端的角度出发，我觉得首先回答必须包括几个基本的点，然后在根据你的理解深入回答。
 
@@ -568,355 +962,30 @@ Dirty，几个 Incremental 的 reflow 发生在同一个 frame 的子树上
 
 至此从浏览器地址栏输入 URL 到页面呈现到你面前的整个过程就分析完了。
 
-## 浏览器渲染过程与性能优化
+<br/>
 
-https://juejin.cn/post/6844904040346681358#heading-27
+**浏览器缓存**
 
-## HTTP CODE 状态码
+强制缓存优先于协商缓存进行，若强制缓存(Expires 和 Cache-Control)生效则直接使用缓存，若不生效则进行协商缓存(Last-Modified / If-Modified-Since 和 Etag / If-None-Match)，协商缓存由服务器决定是否使用缓存，若协商缓存失效，那么代表该请求的缓存失效，重新获取请求结果，再存入浏览器缓存中；生效则返回 304，继续使用缓存，主要过程如下：
 
-```html
-100 Continue 继续，一般在发送post请求时，已发送了http
-header之后服务端将返回此信息，表示确认，之后发送具体参数信息 200 OK 正常返回信息
-201 Created 请求成功并且服务器创建了新的资源 202 Accepted
-服务器已接受请求，但尚未处理 301 Moved Permanently 请求的网页已永久移动到新位置
-302 Found 临时性重定向 303 See Other 临时性重定向，且总是使用 GET 请求新的 URI
-304 Not Modified 自从上次请求后，请求的网页未修改过 400 Bad Request
-服务器无法理解请求的格式，客户端不应当尝试再次使用相同的内容发起请求 401
-Unauthorized 请求未授权 403 Forbidden 禁止访问 404 Not Found 找不到如何与 URI
-相匹配的资源 500 Internal Server Error 最常见的服务器端错误 503 Service
-Unavailable 服务器端暂时无法处理请求（可能是过载或维护）
-```
+![](https://pics1.baidu.com/feed/bd3eb13533fa828bdc28583dc7e44d33950a5ae3.jpeg?token=e62e6b72e2053c46185f2ddf0532a861)
 
-## 性能分析 chrome devtool lighthouse
+![](https://www.mwcxs.top/static/upload/pics/2019/1/30SX0D2hqApuJ7Z44y609Z3RKp.png)
 
-## 前端页面加载阻塞渲染问题，如何解决？
 
-一、解析 DOM 树和 CSSOM
+## get 和 post 区别
 
-1.HTML 标签进行 Dom 树解析
-解析遇到 link、script、img 标签时，浏览器会向服务器发送请求资源。
-script 的加载或者执行都会阻塞 html 解析、其他下载线程以及渲染线程。
-link 加载完 css 后会解析为 CSSOM(层叠样式表对象模型,一棵仅含有样式信息的树)。css 的加载和解析不会阻塞 html 的解析，但会阻塞渲染。
-img 的加载不会阻塞 html 的解析，但 img 加载后并不渲染，它需要等待 Render Tree 生成完后才和 Render Tree 一起渲染出来。未下载完的图片需等下载完后才渲染。
+## 重载重写区别，应用场景
 
-2.CSS 语法进行 CSS 树解析
-CSS 解释器将 CSS 进行解释然后解析
-划重点！！！Dom 树和 CSSOM 两者不是解析完再渲染的，而是边解析边进行渲染的！
-DOM 树和 CSSOM 渲染完成后合并生成 Render 树
-布局（reflow 重排发生在这个阶段）
-布局（reflow 重排发生在这个阶段）
+## 合并两个有序数组
 
-这个阶段是通过递归调用进行布局的，引擎计算各元素的尺寸大小，进行布局树绘制
+## css 三角形的实现
 
-触发重排：
+<br/>
 
-页面首次渲染
-浏览器窗口大小变化
-元素尺寸、位置、内容、字体大小发生变化
-添加或删除可见的元素
-激活伪类时
+## **闲聊 | 区域**
 
-绘制（repainting 重绘发生在这个阶段）
-触发重绘：改变元素颜色、背景、visibility、outline 等属性
-
-重排一定会触发重绘，重绘不一定会触发重排 。
-
-阻塞问题总结
-阻塞发生的情况：
-遇到 script 标签加载 js 的时候会加载 js 并且执行完毕才开始渲染
-遇到 alert 会阻塞
-css 也会阻塞
-css 是由单独的下载线程异步下载的。
-
-总结：
-1.css 加载不会阻塞 DOM 树的解析
-2.css 加载会阻塞 DOM 树（render 树）的渲染
-3.css 加载会阻塞后面 js 语句的执行
-
-为了避免让用户看到长时间的白屏时间，我们应该尽可能的提高 css 加载速度，比如可以使用以下几种方法:
-
-使用 CDN(因为 CDN 会根据你的网络状况，替你挑选最近的一个具有缓存内容的节点为你提供资源，因此可以减少加载时间)
-对 css 进行压缩(可以用很多打包工具，比如 webpack,gulp 等，也可以通过开启 gzip 压缩)
-合理的使用缓存(设置 cache-control,expires,以及 E-tag 都是不错的，不过要注意一个问题，就是文件更新后，你要避免缓存而带来的影响。其中一个解决防范是在文件名字后面加一个版本号)
-减少 http 请求数，将多个 css 文件合并，或者是干脆直接写成内联样式(内联样式的一个缺点就是不能缓存)
-
-![](https://img2018.cnblogs.com/blog/1659314/201908/1659314-20190822111456778-550471352.jpg)
-
-## JS 更新 DOM 后页面及时渲染问题
-
-深入研究浏览器内核可以发现，浏览器内核是多线程的，其中一个常驻线程叫 javascript 引擎线程，负责执行 js 代码，还有一个常驻线程叫 GUI 渲染线程，负责页面渲染，dom 重画等操作。javascript 引擎是基于事件驱动单线程执行的，js 线程一直在等待着任务列表中的任务到来，而 js 线程与 gui 渲染线程是互斥的，当 js 线程执行时，渲染线程呈挂起状态，只有当 js 线程空闲时渲染线程才会执行。所以，我们可以理解为什么 dom 更新总是不能被立刻执行。就我们的代码来说，显示提示和隐藏提示的 dom 操作都被浏览器记下来了并放在 gui 渲染线程的任务队列中，但都没有立刻进行渲染，而是在当前函数完成后（js 线程已处于空闲状态），进行最终的 dom 渲染，而我们的用户则基本感受不到这个过程，因为经过 show 和 hide 两个相反的操作，相当于 dom 完全没变。
-
-![](https://img-blog.csdn.net/20131116163500734)
-
-浏览器的行为虽然是合理的，但却给我们带来了麻烦，怎么才能强制浏览器执行 dom 更新的操作以满足我们的业务需要，给用户友好的提示呢，有两种方法：
-
-采用 alert 语句进行提示，alert 语句会 block 住 js 线程，将执行权让给 gui 渲染线程，执行 alert 之后浏览器会把这个语句之前的所有对 dom 的操作都进行体现。这个方法虽然简单有效，但不具有可操作性，首先 alert 是简单粗暴的一种提示方式，反倒降低了用户体验，其次不能适用在各种场景中，不可能在系统中无缘无故地弹出个 alert 框只是为了强制重画更新的 dom。所以，该方法不值得推广。
-
-采用 setTimeout 方法，这是普遍的解决方案。把计算逻辑和隐藏提示的方法放在 setTimeout 里可以解决这个问题，因为 setTimeout 启用了一个定时器，指定在经过一段时间后执行某段逻辑，从而使这段逻辑跳离了当前函数体，使当前函数可以快速地执行完，之后如果 js 引擎线程中没有排队的任务，则 gui 渲染线程得到执行，showTip 相关的 dom 更新得到体现。当定时器到时后，js 线程又得到了新的任务，从而使计算逻辑和隐藏提示的操作得到执行。
-
-## HTTP 1.0 和 HTTP2.0 的区别
-
-HTTP/2 没有改变 HTTP 的基本语义和操作，各种操作方法（如 GET/POST/HEAD 等）、请求头和请求体机制都没有改变，不同的只是传输的方式改变了。HTTP/1.x 协议以换行符作为纯文本的分隔符，而 HTTP/2 将所有传输的信息分割为更小的消息和帧，并采用二进制格式对它们编码。
-
-**HTTP/2 的主要功能特性**
-
-将 HTTP 协议中的纯文本传输修改成了二进制帧传输，分为头部帧和数据帧。
-使用 HPCAK 对头部数据压缩，添加头部索引减少重复头部数据传输。
-添加数据优先级，针对不同的数据源建立不同的优先级树，确保优先级高的数据不会被阻塞。
-请求响应的复用，同一个数据流中可以同时以不同的顺序发送多个不同的帧，每个数据源只产生一个连接。
-流控制，阻止发送方向接收方发送的大量数据，通过请求窗口限制请求速率。
-服务端推送，打破严格的请求-响应机制，服务端也可以主动推送数据到客户端。
-
-**HTTP/2 数据传输的基本元素**
-
-新的 HTTP/2 协议通过二进制帧来传输数据，改变了客户端与服务器之间交换数据的方式，主要涉及了三个概念：
-
-帧：HTTP/2 数据传输的基本单位，通过把原始的文本数据处理成二进制帧来发送。
-消息：逻辑请求和响应构成的统一整体就是消息。
-数据流：建立的 TCP 连接，承载发送一条和多条消息。
-帧和消息
-
-和 HTTP/1 一样，HTTP/2 依旧还是保留了请求头、请求体以及响应体的部分。只不过在传输的时候被处理成了二进制的内容格式，同时把请求帧和响应帧区分开来了，两者可以单独发送。
-
-## 手撕 简版 Promise
-
-```javascript
-let myPromise = function (executor) {
-  let self = this; //缓存一下this
-
-  self.status = "pending"; // 状态管理 状态的变化只能由pending变为resolved或者rejected。一件事情不能既成功又失败。所以resolved和rejected不能相互转化。
-  self.value = undefined; // 成功后的值 传给resolve
-  self.reason = undefined; //失败原因 传给reject
-
-  self.onResolvedCallbacks = []; // 存放then中成功的回调
-  self.onRejectedCallbacks = []; // 存放then中失败的回调
-  // 这里说明一下，第三步使用定时器。执行完 new Promise 之后，会执行then方法，此时会把then中的方法缓存起来，并不执行：此时状态还是pending。等到定时器2秒之后，执行
-  // resolve|reject 时，而是依次执行存放在数组中的方法。 参考发布订阅模式
-
-  function resolve(value) {
-    // pending => resolved
-    if (self.status === "pending") {
-      self.value = value;
-      self.status = "resolved";
-      // 依次执行缓存的成功的回调
-      self.onResolvedCallbacks.forEach((fn) => fn(self.value));
-    }
-  }
-
-  function reject(reason) {
-    // pending => rejected
-    if (self.status === "pending") {
-      self.value = value;
-      self.status = "rejected";
-      // 依次执行缓存的失败的回调
-      self.onRejectedCallbacks.forEach((fn) => fn(self.reason));
-    }
-  }
-
-  try {
-    //new Promise 时 executor执行
-    executor(resolve, reject);
-  } catch (error) {
-    reject(error); // 当executor中执行有异常时，直接执行reject
-  }
-};
-
-// 每个Promise实例上都有then方法
-Promise.prototype.then = function (onFulfilled, onRejected) {
-  let self = this;
-
-  // 执行了 resolve
-  if (self.status === "resolved") {
-    // 执行成功的回调
-    onFulfilled(self.value);
-  }
-
-  // 执行了 reject
-  if (self.status === "rejected") {
-    // 执行失败的回调
-    onRejected(self.reason);
-  }
-
-  // new Promise中可以支持异步行为 当既不执行resolve又不执行reject时 状态是默认的等待态pending
-  if (self.status === "pending") {
-    // 缓存成功的回调
-    self.onResolvedCallbacks.push(onFulfilled);
-    // 缓存失败的回调
-    self.onRejectedCallbacks.push(onRejected);
-  }
-};
-```
-
-## 通过解析过程了解 JavaScript
-
-什么是 Javascript 解析引擎？
-Javascript 解析引擎（简称 Javascript 引擎），是一个程序，是浏览器引擎的一个部分。
-
-每个浏览器的 Javascript 解析引擎都不相同（因为每个浏览器编写 Javascript 解析引擎的语言（C 或者 C++）以及解析原理都不相同）。标准的 Javascript 解析引擎会按照 ECMAScript 文档来实现。虽然每个浏览器的 Javascript 解析引擎不同，但 Javascript 的语言性质决定了 Javascript 关键的渲染原理仍然是动态执行 Javascript 字符串。只是词法分析、语法分析、变量赋值、字符串拼接的实现方式有所不同。
-
-JavaScript 解析引擎到底是干什么的？
-JavaScript 解析引擎就是根据 ECMAScript 定义的语言标准来动态执行 JavaScript 字符串。虽然之前说现在很多浏览器不全是按照标准来的，解释机制也不尽相同，但动态解析 JS 的过程还是分成两个阶段：语法检查阶段和运行阶段。
-
-语法检查包括词法分析和语法分析，运行阶段又包括预解析和运行阶段（像 V8 引擎会将 JavaScript 字符串编译成二进制代码，此过程应该归到语法检查过程中）。
-
-JavaScript 解析过程
-在 JavaScript 解析过程中，如遇错误就直接跳出当前代码块，直接执行下一个 script 代码段。所以在同一个 script 内的代码段有错误的话就不会执行下去，但是不会影响下一个 script 内的代码段。
-
-第一阶段：语法检查
-语法检查也是 JavaScript 解析器的工作之一，包括 词法分析 和 语法分析，过程大致如下：
-
-一：词法分析
-词法分析：JavaScript 解释器先把 JavaScript 代码（字符串）的字符流按照 ECMAScript 标准转换为记号流。
-例如：把字符流：
-
-a = (b - c);
-转换为记号流：
-
-NAME "a"
-EQUALS
-OPEN_PARENTHESIS
-NAME "b"
-MINUS
-NAME "c"
-CLOSE_PARENTHESIS
-SEMICOLON
-二：语法分析
-语法分析：JavaScript 语法分析器在经过词法分析后，将记号流按照 ECMAScript 标准把词法分析所产生的记号生成语法树。
-通俗地说就是把从程序中收集的信息存储到数据结构中，每取一个词法记号，就送入语法分析器进行分析。
-
-语法分析不做的事：去掉注释，自动生成文档，提供错误位置（可以通过记录行号来提供）。ECMAScript 标准如下：
-
-var，if，else，break，continue 等是 JavaScript 的关键词
-abstract，int，long 等是 JavaScript 保留词
-怎么样算是数字、怎么样算是字符串等等
-定义了操作符（+，-，=）等操作符
-定义了 JavaScript 的语法
-定义了对表达式，语句等标准的处理算法，比如遇到==该如何处理
-……
-当语法检查正确无误之后，就可以进入运行阶段了。
-
-第二阶段：运行阶段
-一：预解析
-第一步：JavaScript 引擎将语法检查正确后生成的语法树复制到当前执行上下文中。
-第二步：JavaScript 引擎会对语法树当中的变量声明、函数声明以及函数的形参进行属性填充。
-
-“预解析”从语法检查阶段复制过来的信息如下：
-
-内部变量表 varDecls：varDecls 保存的用 var 进行显式声明的局部变量。
-内嵌函数表 funDecls：在“预解析”阶段，发现有函数定义的时候，除了记录函数的声明外，还会创建一个原型链对象（prototype）。
-…其他的信息。
-执行上下文（execution context）
-
-（一）预解析阶段创建的执行上下文包括：变量对象、作用域链、this
-
-变量对象（Variable Object）：由 var declaration、function declaration（变量声明、函数声明）、arguments（参数）构成。变量对象是以单例形式存在。
-作用域链（Scope Chain）：variable object + all parent scopes（变量对象以及所有父级作用域）构成。
-this 值：（thisValue）：content object。this 值在进入上下文阶段就确定了。一旦进入执行代码阶段，this 值就不会变了。
-（二）“预解析”阶段创建执行上下文之后，还会对变量对象/活动对象（VO/AO）的一些属性填充数值。
-
-函数的形参：执行上下文的变量对象的一个属性，其属性名就是形参的名字，其值就是实参的值；对于没有传递的参数，其值为 undefined。
-函数声明：执行上下文的变量对象的一个属性，属性名和值都是函数对象创建出来的；如果变量对象已经包含了相同名字的属性，则会替换它的值。
-变量声明：执行上下文的变量对象的一个属性，其属性名即为变量名，其值为 undefined；如果变量名和已经声明的函数名或者函数的参数名相同，则不会影响已经存在的函数声明的属性，该声明会被忽略掉，但其包含的赋值操作不会忽略。
-变量对象/活动对象（VO/AO）填充的顺序也是按照以上顺序：函数的形参->函数声明->变量声明；在变量对象/活动对象（VO/AO）中权重高低也按照函数的形参->函数声明->变量声明顺序来。
-
-如下代码：
-
-    var a=1;
-    function b(a) {
-        alert(a);
-    }
-    var b;
-    alert(b); // function b(a) { alert(a); }
-    b();  //undefined
-
-变量对象/活动对象（VO/AO）填充及优先顺序
-
-以上代码在进入执行上下文时，按照函数的形参->函数声明->变量声明顺序来填充，并且优先权永远都是函数的形参>函数声明>变量声明，所以只要 alert(a)中的 a 是函数中的形参，就永远不会被函数和变量声明覆盖。就算没有赋值也是默认填充的 undefined 值。
-
-第二部分：执行代码
-经过“预解析”创建执行上下文之后，就进入执行代码阶段，VO/AO 就会重新赋予真实的值，“预解析”阶段赋予的 undefined 值会被覆盖。
-
-此阶段才是程序真正进入执行阶段，Javascript 引擎会一行一行的读取并运行代码。此时那些变量都会重新赋值。
-
-假如变量是定义在函数内的，而函数从头到尾都没被激活（调用）的话，则变量值永远都是 undefined 值。
-
-进入了执行代码阶段，在“预解析”阶段所创建的任何东西可能都会改变，不仅仅是 VO/AO，this 和作用域链也会因为某些语句而改变，后面会讲到。
-
-了解完 Javascript 的解析过程最后我们再来了解下 firebug 的控制台对 Javascript 的报错提示吧。
-
-其实 firebug 的控制台也算是 JavaScript 的解释器，而且他们会提示我们哪行出现了错误或者错误发生在哪个时期，语法检查阶段错误，还是运行期错误。
-
-如下：
-
-    alert(var);// SyntaxError: syntax error 语法分析阶段错误 ：语法错误
-    var=1;; // SyntaxError: missing variable name 语法分析阶段错误 ：var是保留字符，导致变量名丢失
-    a=b=v // ReferenceError: v is not defined 运行期错误： v 是未定义的
-    JavaScript错误信息)
-
-有如此详细的错误提示，是不是就很快就知道代码中到底是哪里错了呢！
-
-接下来我们详细来介绍执行上下文中的一个重要概念——作用域链。
-
-作用域链（Scope Chain）
-
-作用域链是处理标识符时进行变量查询的变量对象列表，每个执行上下文都有自己的变量对象：对于全局上下文而言，其变量对象就是全局对象本身；对于函数而言，其变量对象就是活动对象。
-
-作用域链以及执行上下文的关系
-
-在 Javascript 中只有函数能规定作用域，全局执行上下文中的 Scope 是全局上下文中的属性，也是最外层的作用域链。
-
-函数的属性[[Scope]]是在“预解析”的时候就已经存在的了，它包含了所有上层变量对象，并一直保存在函数中。就算函数永远都没被激活（调用），[[Scope]]也都还是存在函数对象上。
-
-创建执行上下文的 Scope 属性和进入执行上下文的过程如下：
-
-Scope = AO + [[Scope]] //预解析时的 Scope 属性
-Scope = [AO].concat([[Scope]]); //执行阶段，将 AO 添加到作用域链的最前端
-执行上下文定义的 Scope 属性变化过程
-
-执行上下文中的[AO]是函数的活动对象，而[[Scope]]则是该函数属性作用域。当前函数的 AO 永远是在最前面的，保存在堆栈上，而每当函数激活的时候，这些 AO 都会压栈到该堆栈上，查询变量是先从栈顶开始查找，也就是说作用域链的栈顶永远是当前正在执行的代码所在环境的 VO/AO（当函数调用结束后，则会从栈顶移除）。
-
-通俗点讲就是：JavaScript 解释器通过作用域链将不同执行位置上的变量对象串连成列表，并借助这个列表帮助 JavaScript 解释器检索变量的值。作用域链相当于一个索引表，并通过编号来存储它们的嵌套关系。当 JavaScript 解释器检索变量的值，会按着这个索引编号进行快速查找，直到找到全局对象为止，如果没有找到值，则传递一个特殊的 undefined 值。
-
-是不是又想到了一条 JavaScript 高效准则：为什么说在该函数内定义的变量，能减少函数嵌套能提高 JavaScript 的效率？因为函数定义的变量，此变量永远在栈顶，这样子查询变量的时间变短了。
-
-作用域的特性
-
-保证查询有序的访问所有变量和函数
-作用域链感觉就是一个 VO 链表，当访问一个变量时，先在链表的第一个 VO 上查找，如果没有找到则继续在第二个 VO 上查找，直到搜索结束，也就是搜索到全局执行环境的 VO 中。这也就形成了作用域链的概念。
-
-var color="blue";
-function changecolor(){
-var anothercolor="red";
-function swapcolors(){
-var tempcolor=anothercolor;
-anothercolor=color;
-color=tempcolor; // Todo something
-}
-swapcolors();
-}
-changecolor();//这里不能访问 tempcolor 和 anocolor;但是可以访问 color;
-alert("Color is now "+color);
-作用域链保护变量安全
-
-函数的作用域是在函数创建即“预解析”阶段就已经就已经定义了，而在代码执行阶段则是将函数的作用域添加到作用域链上。
-
-原型链查询
-
-在介绍“预解析”阶段时，我们有提到当创建函数时，同时也会创建原型链对象（prototype）函数天生的。原型链对象在作用域链中没有找到变量对象时，那么就会通过原型链来查找。
-
-function Foo() {
-function bar() {
-alert(x);
-}
-bar();
-}
-Object.prototype.x = 10;
-Foo(); // 10
-上例中在作用域链中遍历查询，到了全局对象了，该对象继承自 Object.prototype，因此，最终变量“x”的值就变成了 10。不过，在原型链上定义变量对象有些浏览器不支持，譬如 IE6，而且这样增加了变量对象的查询时间。所以变量声明尽量在调用函数 AO 里，即在用到该变量的函数内声明变量对象。
-
-作用域是在“预解析”时就已经决定的，所以作用域被叫做静态作用域，而在执行阶段的则被叫做动态链，因为在执行阶段会改变作用域链中填充的值。
-
-## 前端技术专家
+**前端技术专家**
 
 ![](https://static001.geekbang.org/resource/image/e0/92/e0c654fa7cf5f63cdcca1b6c51008992.jpeg)
 
