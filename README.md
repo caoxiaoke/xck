@@ -213,13 +213,17 @@ async 则是一个乱序执行的主,反正对它来说脚本的加载和执行�
 
 三角形实现原理：宽度 width 为 0；height 为 0；（1）有一条横竖边（上下左右）的设置为 border-方向：长度 solid red，这个画的就是底部的直线。其他边使用 border-方向：长度 solid transparent。（2）有两个横竖边（上下左右）的设置，若斜边是在三角形的右边，这时候设置 top 或 bottom 的直线，和右边的斜线。若斜边是在三角形的左边，这时候设置 top 或 bottom 的直线，和左边的斜线。
 
+
+```
 #triangle-up {
-width: 0;
-height: 0;
-border-left: 50px solid transparent;
-border-right: 50px solid transparent;
-border-bottom: 100px solid red;
+	width: 0;
+	height: 0;
+	border-left: 50px solid transparent;
+	border-right: 50px solid transparent;
+	border-bottom: 100px solid red;
 }
+
+```
 
 <br/>
 
