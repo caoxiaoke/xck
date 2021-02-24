@@ -207,9 +207,20 @@ async 则是一个乱序执行的主,反正对它来说脚本的加载和执行�
         text-align: center;
       }
 
-
 <br/>
+
 **css 三角形的实现**
+
+三角形实现原理：宽度 width 为 0；height 为 0；（1）有一条横竖边（上下左右）的设置为 border-方向：长度 solid red，这个画的就是底部的直线。其他边使用 border-方向：长度 solid transparent。（2）有两个横竖边（上下左右）的设置，若斜边是在三角形的右边，这时候设置 top 或 bottom 的直线，和右边的斜线。若斜边是在三角形的左边，这时候设置 top 或 bottom 的直线，和左边的斜线。
+
+#triangle-up {
+width: 0;
+height: 0;
+border-left: 50px solid transparent;
+border-right: 50px solid transparent;
+border-bottom: 100px solid red;
+}
+
 <br/>
 
 **盒模型**
@@ -237,12 +248,12 @@ css 盒模型本质是一个盒子，它由边距、边框、填充和实际内�
 **JS 实现深浅拷贝**
 
 ```html
-浅拷贝 // 1. ...实现 let copy1 = {...{x:1}} // 2. Object.assign实现 let copy2
-=Object.assign({}, {x:1}) 深拷贝 // 1. JOSN.stringify() //JSON.parse() let obj
-={a: 1, b: {x: 3}} JSON.parse(JSON.stringify(obj)) // 2. 递归拷贝 function
+1.浅拷贝 实现 let copy1 = {...{x:1}} bject.assign实现 let
+copy2=Object.assign({}, {x:1}) 2.深拷贝 // 1. JOSN.stringify() //JSON.parse()
+let obj={a: 1, b: {x: 3}}; JSON.parse(JSON.stringify(obj)) 2. 递归拷贝 function
 deepClone(obj) { let copy = obj instanceof Array ? [] : {} for (let i in obj) {
-if (obj.hasOwnProperty(i)) { copy[i] = typeof obj[i] === 'object' ?
-deepClone(obj[i]) : obj[i] } } return copy }
+if (obj.hasOwnProperty(i)) { copy[i] = typeof obj[i] === 'object'
+?deepClone(obj[i]) : obj[i] } } return copy }
 ```
 
 **作用域和作用域链**
@@ -382,7 +393,8 @@ CLOSE_PARENTHESIS
 SEMICOLON
 ```
 
-二：语法分析
+**二：语法分析**
+
 语法分析：JavaScript 语法分析器在经过词法分析后，将记号流按照 ECMAScript 标准把词法分析所产生的记号生成语法树。
 通俗地说就是把从程序中收集的信息存储到数据结构中，每取一个词法记号，就送入语法分析器进行分析。
 
@@ -397,7 +409,8 @@ abstract，int，long 等是 JavaScript 保留词
 ……
 当语法检查正确无误之后，就可以进入运行阶段了。
 
-第二阶段：运行阶段
+**第二阶段：运行阶段**
+
 一：预解析
 第一步：JavaScript 引擎将语法检查正确后生成的语法树复制到当前执行上下文中。
 第二步：JavaScript 引擎会对语法树当中的变量声明、函数声明以及函数的形参进行属性填充。
@@ -505,11 +518,11 @@ changecolor();//这里不能访问 tempcolor 和 anocolor;但是可以访问 col
 alert("Color is now "+color);
 ```
 
-作用域链保护变量安全
+**作用域链保护变量安全**
 
 函数的作用域是在函数创建即“预解析”阶段就已经就已经定义了，而在代码执行阶段则是将函数的作用域添加到作用域链上。
 
-原型链查询
+**原型链查询**
 
 在介绍“预解析”阶段时，我们有提到当创建函数时，同时也会创建原型链对象（prototype）函数天生的。原型链对象在作用域链中没有找到变量对象时，那么就会通过原型链来查找。
 
@@ -618,13 +631,15 @@ Promise.prototype.then = function (onFulfilled, onRejected) {
 
 一、解析 DOM 树和 CSSOM
 
-1.HTML 标签进行 Dom 树解析
+**1.HTML 标签进行 Dom 树解析**
+
 解析遇到 link、script、img 标签时，浏览器会向服务器发送请求资源。
 script 的加载或者执行都会阻塞 html 解析、其他下载线程以及渲染线程。
 link 加载完 css 后会解析为 CSSOM(层叠样式表对象模型,一棵仅含有样式信息的树)。css 的加载和解析不会阻塞 html 的解析，但会阻塞渲染。
 img 的加载不会阻塞 html 的解析，但 img 加载后并不渲染，它需要等待 Render Tree 生成完后才和 Render Tree 一起渲染出来。未下载完的图片需等下载完后才渲染。
 
-2.CSS 语法进行 CSS 树解析
+**2.CSS 语法进行 CSS 树解析**
+
 CSS 解释器将 CSS 进行解释然后解析
 划重点！！！Dom 树和 CSSOM 两者不是解析完再渲染的，而是边解析边进行渲染的！
 DOM 树和 CSSOM 渲染完成后合并生成 Render 树
@@ -704,7 +719,6 @@ Tip：像斐波契数列这类的求值函数，计算量还是有些大的，�
 
      当编译器检测到一个函数调用是尾递归的时候，它就覆盖当前的活动记录而不是在栈中去创建一个新的。编译器可以做到这点，因为递归调用是当前活跃期内最后一条待执行的语句，于是当这个调用返回时栈帧中并没有其他事情可做，因此也就没有保存栈帧的必要了。通过覆盖当前的栈帧而不是在其之上重新添加一个，这样所使用的栈空间就大大缩减了，这使得实际的运行效率会变得更高。
 
-
 **以尾递归方式实现阶乘函数的实现：**
 
 ```
@@ -763,15 +777,18 @@ a.push(4,5,6);
 
 一、对保存到 cookie 里面的敏感信息必须加密
 
-二、设置 HttpOnly 为 true
+**二、设置 HttpOnly 为 true**
+
 1、该属性值的作用就是防止 Cookie 值被页面脚本读取。
 2、但是设置 HttpOnly 属性，HttpOnly 属性只是增加了攻击者的难度，Cookie 盗窃的威胁并没有彻底消除，因为 cookie 还是有可能传递的过程中被监听捕获后信息泄漏。
 
-三、设置 Secure 为 true
+**三、设置 Secure 为 true**
+
 1、给 Cookie 设置该属性时，只有在 https 协议下访问的时候，浏览器才会发送该 Cookie。
 2、把 cookie 设置为 secure，只保证 cookie 与 WEB 服务器之间的数据传输过程加密，而保存在本地的 cookie 文件并不加密。如果想让本地 cookie 也加密，得自己加密数据。
 
-四、给 Cookie 设置有效期
+**四、给 Cookie 设置有效期**
+
 1、如果不设置有效期，万一用户获取到用户的 Cookie 后，就可以一直使用用户身份登录。
 2、在设置 Cookie 认证的时候，需要加入两个时间，一个是“即使一直在活动，也要失效”的时间，一个是“长时间不活动的失效时间”，并在 Web 应用中，首先判断两个时间是否已超时，再执行其他操作。
 
@@ -855,11 +872,11 @@ ServiceUnavailable 服务器端暂时无法处理请求（可能是过载或维�
 
 说完整个过程的几个关键点后我们再来展开的说一下。
 
-一、URL
+**一、URL**
 
 我们常见的 RUL 是这样的:http://www.baidu.com,这个域名由三部分组成：协议名、域名、端口号，这里端口是默认所以隐藏。除此之外URL还会包含一些路径、查询和其他片段，例如：http://www.tuicool.com/search?kw=%E4%。我们最常见的的协议是HTTP协议，除此之外还有加密的HTTPS协议、FTP协议、FILe协议等等。URL的中间部分为域名或者是IP，之后就是端口号了。通常端口号不常见是因为大部分的都是使用默认端口，如HTTP默认端口80，HTTPS默认端口443。说到这里可能有的面试官会问你同源策略，以及更深层次的跨域的问题，我今天就不在这里展开了。
 
-二、缓存
+**二、缓存**
 
 说完 URL 我们说说浏览器缓存,HTTP 缓存有多种规则，根据是否需要重新向服务器发起请求来分类，我将其分为强制缓存，对比缓存。
 
@@ -877,7 +894,7 @@ Etag：资源的实体标识（哈希字符串），当资源内容更新时，E
 
 ![](https://images2015.cnblogs.com/blog/1034346/201703/1034346-20170329142757404-377860259.png)
 
-三、DNS 域名解析
+**三、DNS 域名解析**
 
 我们知道在地址栏输入的域名并不是最后资源所在的真实位置，域名只是与 IP 地址的一个映射。网络服务器的 IP 地址那么多，我们不可能去记一串串的数字，因此域名就产生了，域名解析的过程实际是将域名还原为 IP 地址的过程。
 
@@ -895,7 +912,7 @@ Etag：资源的实体标识（哈希字符串），当资源内容更新时，E
 
 ![](https://images2015.cnblogs.com/blog/1034346/201703/1034346-20170329144611358-1044454178.jpg)
 
-四、TCP 连接
+**四、TCP 连接**
 
 在通过第一步的 DNS 域名解析后，获取到了服务器的 IP 地址，在获取到 IP 地址后，便会开始建立一次连接，这是由 TCP 协议完成的，主要通过三次握手进行连接。
 
@@ -935,7 +952,7 @@ Etag：资源的实体标识（哈希字符串），当资源内容更新时，E
 
 响应体为服务器返回给浏览器的信息，主要由 HTML，css，js，图片文件组成。
 
-七、页面渲染
+**七、页面渲染**
 
 如果说响应的内容是 HTML 文档的话，就需要浏览器进行解析渲染呈现给用户。整个过程涉及两个方面：解析和渲染。在渲染页面之前，需要构建 DOM 树和 CSSOM 树。
 
