@@ -99,9 +99,9 @@ DOM 渲染流程
 
 **CSS 权重优先级的认知**
 
-	从 CSS 代码存放位置看权重优先级：内嵌样式 > 内部样式表 > 外联样式表。其实这个基本可以忽视之，大部分情况下 CSS 代码都是使用外联样式表。
+    从 CSS 代码存放位置看权重优先级：内嵌样式 > 内部样式表 > 外联样式表。其实这个基本可以忽视之，大部分情况下 CSS 代码都是使用外联样式表。
 
-	从样式选择器看权重优先级：important > 内嵌样式 > ID > 类 > 标签 | 伪类 | 属性选择 > 伪对象 > 继承 > 通配符。
+    从样式选择器看权重优先级：important > 内嵌样式 > ID > 类 > 标签 | 伪类 | 属性选择 > 伪对象 > 继承 > 通配符。
 
 **CSS 水平垂直居中**
 
@@ -271,13 +271,44 @@ DOM 渲染流程
 **JS 实现深浅拷贝**
 
 ```html
-1.浅拷贝 实现 let copy1 = {...{x:1}} bject.assign实现 let
-copy2=Object.assign({}, {x:1}) 2.深拷贝 // 1. JOSN.stringify() //JSON.parse()
-let obj={a: 1, b: {x: 3}}; JSON.parse(JSON.stringify(obj)) 2. 递归拷贝 function
-deepClone(obj) { let copy = obj instanceof Array ? [] : {} for (let i in obj) {
-if (obj.hasOwnProperty(i)) { copy[i] = typeof obj[i] === 'object'
-?deepClone(obj[i]) : obj[i] } } return copy }
+
+1.浅拷贝 实现 
+
+
 ```
+let copy1 = {...{x:1}} bject.assign实现
+
+let copy2=Object.assign({}, {x:1}) 
+```
+
+
+2.深拷贝
+
+
+```
+// 1. JOSN.stringify() //JSON.parse()
+
+let obj={a: 1, b: {x: 3}}; 
+
+JSON.parse(JSON.stringify(obj)) 
+```
+
+
+2. 递归拷贝 
+
+
+```
+function deepClone(obj) {
+	let copy = obj instanceof Array ? [] : {} 
+	for (let i in obj) {
+		if (obj.hasOwnProperty(i)) { 
+		copy[i] = typeof obj[i] === 'object'?deepClone(obj[i]) : obj[i] }
+	} 
+	return copy 
+}
+```
+
+
 
 **作用域和作用域链**
 
@@ -354,13 +385,21 @@ DOM 事件流包括三个阶段:
 **ES6 的新增功能**
 
 1.Default Parameters（默认参数） in ES6
+
 2.Template Literals（模板对象） in ES6
+
 3.Multi-line Strings （多行字符串）in ES6
+
 4.Destructuring Assignment （解构赋值）in ES6
+
 5.Arrow Functions in（箭头函数） ES6
+
 6.Promises in ES6
+
 7.Block-Scoped Constructs Let and Const（块作用域 let 和 const）
+
 8.Classes （类）in ES6
+
 9.Modules （模块）in ES6
 
 ```html
@@ -640,14 +679,13 @@ Promise.prototype.then = function (onFulfilled, onRejected) {
 
 **防抖(debounce)**
 
-	首先提出一种思路：在第一次触发事件时，不立即执行函数，而是给出一个期限值比如200ms，然后：
+    首先提出一种思路：在第一次触发事件时，不立即执行函数，而是给出一个期限值比如200ms，然后：
 
-	如果在200ms内没有再次触发滚动事件，那么就执行函数
-	如果在200ms内再次触发滚动事件，那么当前的计时取消，重新开始计时
-	效果：如果短时间内大量触发同一事件，只会执行一次函数。
+    如果在200ms内没有再次触发滚动事件，那么就执行函数
+    如果在200ms内再次触发滚动事件，那么当前的计时取消，重新开始计时
+    效果：如果短时间内大量触发同一事件，只会执行一次函数。
 
-	实现：既然前面都提到了计时，那实现的关键就在于setTimeout这个函数，由于还需要一个变量来保存计时，考虑维护全局纯净，可以借助闭包来实现：
-
+    实现：既然前面都提到了计时，那实现的关键就在于setTimeout这个函数，由于还需要一个变量来保存计时，考虑维护全局纯净，可以借助闭包来实现：
 
 ```
 /*
@@ -658,7 +696,7 @@ function debounce(fn,delay){
     let timer = null //借助闭包
     return function() {
         if(timer){
-            clearTimeout(timer) 
+            clearTimeout(timer)
         }
         timer = setTimeout(fn,delay)
     }
@@ -668,12 +706,11 @@ function debounce(fn,delay){
 
 **节流(throttle)**
 
-	设计一种类似控制阀门一样定期开放的函数，也就是让函数执行一次后，在某个时间段内暂时失效，过了这段时间后再重新激活（类似于技能冷却时间）。
+    设计一种类似控制阀门一样定期开放的函数，也就是让函数执行一次后，在某个时间段内暂时失效，过了这段时间后再重新激活（类似于技能冷却时间）。
 
-	效果：如果短时间内大量触发同一事件，那么在函数执行一次之后，该函数在指定的时间期限内不再工作，直至过了这段时间才重新生效。
+    效果：如果短时间内大量触发同一事件，那么在函数执行一次之后，该函数在指定的时间期限内不再工作，直至过了这段时间才重新生效。
 
-	实现 这里借助setTimeout来做一个简单的实现，加上一个状态位valid来表示当前函数是否处于工作状态：
-
+    实现 这里借助setTimeout来做一个简单的实现，加上一个状态位valid来表示当前函数是否处于工作状态：
 
 ```
 function throttle(fn,delay){
@@ -681,7 +718,7 @@ function throttle(fn,delay){
     return function() {
        if(!valid){
            //暂时不处理
-           return false 
+           return false
        }
        // 工作时间，执行函数并且在间隔期内把状态位设为无效
         valid = false
@@ -692,7 +729,6 @@ function throttle(fn,delay){
     }
 }
 ```
-
 
 **JS 更新 DOM 后页面及时渲染问题**
 
@@ -775,16 +811,16 @@ https://juejin.cn/post/6844904040346681358#heading-27
 **经典的斐波那契数列：1，1，2，3，5，8，13……即从第三项起，每一项的值是前两项值的和。现在求第 n 项的值**
 
 ```
-function fibonacci(n) { 
+function fibonacci(n) {
 var n1 = 1, n2 = 1, sum;
 for (let i = 2; i < n; i++) {
-	console.log(n1); 
-	sum = n1 + n2 
-	n1 = n2 
-	n2 = sum 
-	} 
-	return sum 
-} 
+	console.log(n1);
+	sum = n1 + n2
+	n1 = n2
+	n2 = sum
+	}
+	return sum
+}
 fibonacci(30)
 ```
 
