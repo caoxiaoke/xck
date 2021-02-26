@@ -268,30 +268,26 @@ DOM 渲染流程
 
     引用类型：object。里面包含的 function、Array、Date。
 
+
 **JS 实现深浅拷贝**
-
-```html
-
-1.浅拷贝 实现 
 
 
 ```
+1.浅拷贝 实现 
+
 let copy1 = {...{x:1}} bject.assign实现
 
 let copy2=Object.assign({}, {x:1}) 
-```
-
 
 2.深拷贝
 
-
-```
 // 1. JOSN.stringify() //JSON.parse()
 
 let obj={a: 1, b: {x: 3}}; 
 
 JSON.parse(JSON.stringify(obj)) 
 ```
+
 
 
 2. 递归拷贝 
