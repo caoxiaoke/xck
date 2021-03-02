@@ -824,6 +824,51 @@ https://juejin.cn/post/6844904040346681358#heading-27
 
 **接雨水**
 
+给定 n 个非负整数表示每个宽度为 1 的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。
+
+**示例 1：**
+
+![](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2018/10/22/rainwatertrap.png)
+
+输入：height = [0,1,0,2,1,0,1,3,2,1,2,1]
+输出：6
+解释：上面是由数组 [0,1,0,2,1,0,1,3,2,1,2,1] 表示的高度图，在这种情况下，可以接 6 个单位的雨水（蓝色部分表示雨水）。
+
+**示例 2：**
+输入：height = [4,2,0,3,2,5]
+输出：9
+
+解题思路
+最短木桶原理：
+每根柱子上方的雨水深度取决于该根柱子左右两边最高的两根柱子中较短那根的高度。
+左右两边最高柱子高度都大于该根柱子的情况下，雨水的深度为其左右两边较小柱子高度减去该根柱子高度。
+
+1.循环遍历整个数组，获取每个柱子i的高度
+2.循环遍历指点元素i左边的数组元素，并求最大值leftMax
+3.循环遍历指定元素i右边的数组元素，并且其最大值rightMax
+4.求leftMax和rightMax中的较小值，较小值减去当前元素i的高度就为当前柱子雨水的深度。
+
+	var trap = function(height) {
+  	 var sum = 0
+  	 for(var i=0;i<height.length;i++){
+    	   var leftMax = 0
+     	  var rightMax = 0
+	   
+       for(var j=i-1;j>=0;j--){   // 求leftMax的值
+           leftMax = (height[j] >= leftMax) ? height[j] : leftMax
+       }
+       
+       for(var k=i+1;k<height.length;k++){   //求rightMax的值
+           rightMax = (height[k] >= rightMax) ? height[k] : rightMax
+       }
+       
+      var min = Math.min(leftMax,rightMax)  //求leftMax、rightMax中的较小值
+     	 if(min > height[i]){
+          	sum += min - height[i]
+       	}
+  	 }
+ 	   return sum
+	};
 
 **经典的斐波那契数列：1，1，2，3，5，8，13……即从第三项起，每一项的值是前两项值的和。现在求第 n 项的值**
 
