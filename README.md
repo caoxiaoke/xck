@@ -1,6 +1,6 @@
 # **前端日常总结大全**
 
-Hi，大家好，这里是我的工作日常记录（总结）部分内容来自于大佬，欢迎大家参观，主要内容分为：HTML（layout）、CSS、JS、性能优化问题、算法、网络安全、浏览器、闲聊。
+Hi，大家好，这里是我的工作日常记录（总结）部分内容来自于大佬，欢迎大家参观，主要内容分为：HTML（layout）、CSS、JS、性能优化问题、算法、网络安全、浏览器、React 、闲聊。
 
 <br/>
 
@@ -257,6 +257,7 @@ DOM 渲染流程
 
 ## **JS | 区域**
 
+
 **JS 数据类型：JS 的数据类型有几种？**
 
     8 种，Number、String、Boolean、Null、undefined、object、symbol、bigInt。
@@ -427,6 +428,159 @@ includes()：返回布尔值，表示是否找到了参数字符串。
 startsWith()：返回布尔值，表示参数字符串是否在原字符串的头部。
 endsWith()：返回布尔值，表示参数字符串是否在原字符串的尾部。
 ```
+
+**ES6中的迭代器(Iterator)和生成器(Generator)**
+
+
+	新的数组方法和新的集合类型(如Set集合与Map集合)都依赖迭代器的实现，这个新特性对于高效的数据处理而言是不可或缺的，在语言的其他特性中也都有迭代器的身影：新的for-of循环、展开运算符(...)，甚至连异步编程都可以使用迭代器。
+	下面是一段标准的for循环代码，通过变量i来跟踪colors数组的索引，循环每次执行时，如果i小于数组长度len则加1，并执行下一次循环
+
+**迭代器(Iterator)**
+
+```javascript
+var colors = ["red", "green", "blue"];
+for (var i = 0, len = colors.length; i < len; i++) {
+    console.log(colors[i]);
+}
+
+```
+虽然循环语句语法简单，但如果将多个循环嵌套则需要追踪多个变量，代码复杂度会大大增加，一不小心就错误使用了其他for循环的跟踪变量，从而导致程序出错。迭代器的出现旨在消除这种复杂性并减少循环中的错误
+
+**ES5 版本迭代器**
+
+```javascript
+function createIterator(items) {
+    var i = 0;
+    return {
+        next: function() {
+            var done = (i >= items.length);
+            var value = !done ? items[i++] : undefined;
+            return {
+                done: done,
+                value: value
+            };
+        }
+    };
+}
+var iterator = createIterator([1, 2, 3]);
+console.log(iterator.next()); // "{ value: 1, done: false }"
+console.log(iterator.next()); // "{ value: 2, done: false }"
+console.log(iterator.next()); // "{ value: 3, done: false }"
+console.log(iterator.next()); // "{ value: undefined, done: true }"
+// 之后的所有调用
+console.log(iterator.next()); // "{ value: undefined, done: true }"
+```
+在上面这段代码中，createIterator()方法返回的对象有一个next()方法，每次调用时，items数组的下一个值会作为value返回。当i为3时，done变为true；此时三元表达式会将value的值设置为undefined。最后两次调用的结果与ES6迭代器的最终返回机制类似，当数据集被用尽后会返回最终的内容
+
+　　上面这个示例很复杂，而在ES6中，迭代器的编写规则也同样复杂，但ES6同时还引入了一个生成器对象，它可以让创建迭代器对象的过程变得更简单
+  
+**生成器(Generator)**
+
+生成器是一种返回迭代器的函数，通过function关键字后的星号(*)来表示，函数中会用到新的关键字yield。星号可以紧挨着function关键字，也可以在中间添加一个空格。
+
+```javascript
+// 生成器
+function *createIterator() {
+    yield 1;
+    yield 2;
+    yield 3;
+}
+// 生成器能像正规函数那样被调用，但会返回一个迭代器
+let iterator = createIterator();
+console.log(iterator.next().value); // 1
+console.log(iterator.next().value); // 2
+console.log(iterator.next().value); // 3
+```
+  在这个示例中，createlterator()前的星号表明它是一个生成器；yield关键字也是ES6的新特性，可以通过它来指定调用迭代器的next()方法时的返回值及返回顺序。生成迭代器后，连续3次调用它的next()方法返回3个不同的值，分别是1、2和3。生成器的调用过程与其他函数一样，最终返回的是创建好的迭代器
+
+　　生成器函数最有趣的部分是，每当执行完一条yield语句后函数就会自动停止执行。举个例子，在上面这段代码中，执行完语句yield 1之后，函数便不再执行其他任何语句，直到再次调用迭代器的next()方法才会继续执行yield 2语句。生成器函数的这种中止函数执行的能力有很多有趣的应用
+
+　　使用yield关键字可以返回任何值或表达式，所以可以通过生成器函数批量地给迭代器添加元素。例如，可以在循环中使用yield关键字
+  
+```javascript
+  function *createIterator(items) {
+    for (let i = 0; i < items.length; i++) {
+        yield items[i];
+    }
+}
+let iterator = createIterator([1, 2, 3]);
+console.log(iterator.next()); // "{ value: 1, done: false }"
+console.log(iterator.next()); // "{ value: 2, done: false }"
+console.log(iterator.next()); // "{ value: 3, done: false }"
+console.log(iterator.next()); // "{ value: undefined, done: true }"
+// 之后的所有调用
+console.log(iterator.next()); // "{ value: undefined, done: true }"
+```
+  在此示例中，给生成器函数createlterator()传入一个items数组，而在函数内部，for循环不断从数组中生成新的元素放入迭代器中，每遇到一个yield语句循环都会停止；每次调用迭代器的next()方法，循环会继续运行并执行下一条yield语句
+
+　　生成器函数是ES6中的一个重要特性，可以将其用于所有支持函数使用的地方
+
+【使用限制】
+
+　　yield关键字只可在生成器内部使用，在其他地方使用会导致程序抛出错误
+  
+```javascript
+  function *createIterator(items) {
+    items.forEach(function(item) {
+        // 语法错误
+        yield item + 1;
+    });
+}
+```
+从字面上看，yield关键字确实在createlterator()函数内部，但是它与return关键字一样，二者都不能穿透函数边界。嵌套函数中的return语句不能用作外部函数的返回语句，而此处嵌套函数中的yield语句会导致程序抛出语法错误
+
+【生成器函数表达式】
+
+　　也可以通过函数表达式来创建生成器，只需在function关键字和小括号中间添加一个星号(*)即可
+  
+```javascript
+  let createIterator = function *(items) {
+    for (let i = 0; i < items.length; i++) {
+        yield items[i];
+    }
+};
+let iterator = createIterator([1, 2, 3]);
+console.log(iterator.next()); // "{ value: 1, done: false }"
+console.log(iterator.next()); // "{ value: 2, done: false }"
+console.log(iterator.next()); // "{ value: 3, done: false }"
+console.log(iterator.next()); // "{ value: undefined, done: true }"
+// 之后的所有调用
+console.log(iterator.next()); // "{ value: undefined, done: true }"
+```
+
+　　在这段代码中，createlterator()是一个生成器函数表达式，而不是一个函数声明。由于函数表达式是匿名的，因此星号直接放在function关键字和小括号之间。此外，这个示例基本与前例相同，使用的也是for循环
+
+　　[注意]不能用箭头函数来创建生成器
+
+【生成器对象的方法】
+
+　　由于生成器本身就是函数，因而可以将它们添加到对象中。例如，在ES5风格的对象字面量中，可以通过函数表达式来创建生成器
+  
+```javascript
+  var o = {
+    createIterator: function *(items) {
+            for (let i = 0; i < items.length; i++) {
+                yield items[i];
+            }
+        }
+};
+let iterator = o.createIterator([1, 2, 3]);
+```
+也可以用ES6的函数方法的简写方式来创建生成器，只需在函数名前添加一个星号(*)
+
+```javascript
+var o = {
+    *createIterator(items) {
+            for (let i = 0; i < items.length; i++) {
+                yield items[i];
+            }
+        }
+};
+let iterator = o.createIterator([1, 2, 3]);
+```
+这些示例使用了不同于之前的语法，但它们的功能实际上是等价的。在简写版本中，由于不使用function关键字来定义createlterator()方法，因此尽管可以在星号和方法名之间留白，但还是将星号紧贴在方法名之前
+
+**更多内容请看** [https://www.cnblogs.com/xiaohuochai/p/7253466.html](https://www.cnblogs.com/xiaohuochai/p/7253466.html "https://www.cnblogs.com/xiaohuochai/p/7253466.html")
 
 **src 和 href 区别**
 
@@ -1338,6 +1492,116 @@ Dirty，几个 Incremental 的 reflow 发生在同一个 frame 的子树上
 
 <br/>
 
+**React Hooks的常见应用及一些原理**
+
+**	类组件（class）
+	类组件的缺点：**
+
+	大型组件很难拆分和重构，也很难测试
+	业务逻辑分散在组件的各个方法中，导致重复逻辑或关联逻辑
+	组件类引入复杂的编程模式，比如render、props
+	
+```javascript
+import React, { Component } from "react";
+
+export default class Button extends Component {
+  constructor() {
+    super();
+    this.state = { buttonText: "Click me, please" };
+    this.handleClick = this.handleClick.bind(this);
+  }
+  handleClick() {
+    this.setState(() => {
+      return { buttonText: "Thanks, been clicked!" };
+    });
+  }
+  render() {
+    const { buttonText } = this.state;
+    return <button onClick={this.handleClick}>{buttonText}</button>;
+  }
+}
+```
+**函数组件**
+目的：React团队希望，组件不要变成复杂的容器，最好只是数据流的管道，开发者可以根据需要组合管道。完全不使用类就能写出一个全功能组件
+```javascript
+
+function Welcome(props) {
+  return <h1>Hello, {props.name}</h1>;
+}
+```
+
+**这种写法有重大限制，必须是纯函数，不能包含状态，也不支持生命周期方法，因此无法取代类。**
+
+**Hooks**
+
+React核心思想是将页面拆成一堆独立的、可复用的组件，并且用自上而下的数据流串联起来。但是在实际项目中很多组件冗长且难以复用。
+
+React Hooks要解决的问题是状态逻辑复用。
+
+React Hooks 的意思是，组件尽量写成纯函数，如果需要外部功能和副作用，就用钩子把外部代码"钩"进来。
+
+React默认提供了一些常用函数，同时也允许封装自己的钩子，React约定，所有钩子函数一律用use前缀命名，意思是为函数引入外部功能。
+
+**4种常见函数：**
+
+```javascript
+useState()
+useContext()
+useReducer()
+useEffect()
+```
+useState(状态钩子)
+纯函数不能有状态，useState用于为函数组件引入状态。
+
+```javascript
+const [count, setCount] = useState(0);
+  
+    return (
+      <div>
+        <p>You clicked {count} times</p>
+        <button onClick={() => setCount(count + 1)}>
+          Click me
+        </button>
+      </div>
+    );
+}
+```
+
+**useEffect(副作用钩子)**
+
+可将useEffect视为componentDidMount，componentDidUpdate 和 componentWillUnmount 的组合。
+
+hooks 更多详细内容 [https://www.jianshu.com/p/e6265f3f2a81](https://www.jianshu.com/p/e6265f3f2a81 "https://www.jianshu.com/p/e6265f3f2a81")
+
+**React网络请求到底该放在哪个生命周期中？**
+
+总的来说，对于异步请求，最好放在componentDidMount中去操作，对于同步的状态改变，可以放在componentWillMount中，一般用的比较少。
+
+如果认为在componentWillMount里发起请求能提早获得结果，这种想法其实是错误的，通常componentWillMount比componentDidMount早不了多少微秒，网络上任何一点延迟，这一点差异都可忽略不计。
+
+**看看react的生命周期：**
+
+**constructor() ----> componentWillMount() ----> render() ----> componentDidMount()**
+
+上面这些方法的调用是有次序的，由上而下依次调用。
+
+constructor被调用是在组件准备要挂载的最开始，此时组件尚未挂载到网页上。
+
+componentWillMount方法的调用在constructor之后，在render之前，在这方法里的代码调用setState方法不会触发重新render，所以它一般不会用来作加载数据之用。
+
+componentDidMount方法中的代码，是在组件已经完全挂载到网页上才会调用被执行，所以可以保证数据的加载。此外，在这方法中调用setState方法，会触发重新渲染。所以，官方设计这个方法就是用来加载外部数据用的，或处理其他的副作用代码。与组件上的数据无关的加载，也可以在constructor里做，但constructor是做组件state初绐化工作，并不是做加载数据这工作的，constructor里也不能setState，还有加载的时间太长或者出错，页面就无法加载出来。所以有副作用的代码都会集中在componentDidMount方法里。
+
+总结：
+
+1.跟服务器端渲染（同构）有关系，如果在componentWillMount里面获取数据，fetch data会执行两次，一次在服务器端一次在客户端。在componentDidMount中可以解决这个问题，componentWillMount同样也会render两次。
+
+2.在componentWillMount中fetch data，数据一定在render后才能到达，如果你忘记了设置初始状态，用户体验不好。
+
+3.react16.0以后，componentWillMount可能会被执行多次。
+
+<br/>
+
+<br/>
 **未完待续～**
 
 <br/>
