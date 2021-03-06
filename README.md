@@ -1490,6 +1490,68 @@ Dirty，几个 Incremental 的 reflow 发生在同一个 frame 的子树上
 
 ## 重载重写区别，应用场景
 
+**重载**
+
+函数名相同，函数的参数列表不同(包括参数个数和参数类型)，根据参数的不同去执行不同的操作。在JavaScript中，同一个作用域，出现两个名字一样的函数，后面的会覆盖前面的，所以 JavaScript 没有真正意义的重载。
+
+```javascript
+// 可以跟据arguments个数实现重载
+    function fn(){
+        switch(arguments.length){
+            case 0:
+            addFn(arguments.length)
+            break
+            case 1:
+            deleteFn(arguments.length)
+        }
+    }
+    function addFn(n){
+        console.log(`fn函数参数个数为${n+1}个`)
+    }
+    function deleteFn(n){
+        console.log(`fn函数参数个数为${n-1}个`)
+    }
+    fn()  // fn函数参数个数为1个
+    fn(1) // fn函数参数个数为0个
+	
+```
+
+**重写**
+
+“实例中的指针仅指向原型，而不是指向构造函数”。
+“重写原型对象切断了现有原型与任何之前已经存在的对象实例之间的关系；它们引用的仍然是最初的原型”。
+
+```javascript
+var parent = function(name,age){
+	this.name = name;
+	this.age = age;
+}
+ 
+parent.prototype.showProper = function(){
+	console.log(this.name+":"+this.age);
+}
+ 
+var child = function(name,age){
+	parent.call(this,name,age);
+}
+ 
+// inheritance
+child.prototype = Object.create(parent.prototype);
+// child.prototype = new parent();
+child.prototype.constructor = child;
+ 
+// rewrite function
+child.prototype.showProper = function(){
+	console.log('I am '+this.name+":"+this.age);
+}
+
+var obj = new child('wozien','22');
+obj.showProper();
+
+```
+
+上面这段代码通过使用寄生组合继承，实现子类私有继承父类私有，子类公有继承父类公有，达到重写父类的showProper
+
 <br/>
 
 **React Hooks的常见应用及一些原理**
