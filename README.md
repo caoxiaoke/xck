@@ -108,6 +108,7 @@ DOM 渲染流程
 
 **CSS 水平垂直居中**
 
+```css
 1.position
 
     .center {
@@ -144,6 +145,7 @@ DOM 渲染流程
         transform: translate(-50%,-50%);
       }
 
+```
 **2.flex 布局**
 
 ```html
@@ -152,7 +154,8 @@ DOM 渲染流程
 </div>
 ```
 
-    .wrap {
+   ```css
+ .wrap {
         width: 100%;
         height: 100vh;
         display: flex;
@@ -163,6 +166,7 @@ DOM 渲染流程
         color: red;
       }
 
+```
 **3.使用伪类**
 
 ```html
@@ -171,7 +175,8 @@ DOM 渲染流程
 </div>
 ```
 
-    .wrap {
+  ```css
+  .wrap {
         width: 100%;
         height: 100%;
         background-color: #009ef4;
@@ -195,6 +200,7 @@ DOM 渲染流程
         vertical-align: middle;
       }
 
+```
 **4.使用表格**
 
 ```html
@@ -203,7 +209,8 @@ DOM 渲染流程
 </div>
 ```
 
-    .wrap {
+  ```css
+  .wrap {
         width: 100%;
         height: 100vh;
         display: table;
@@ -216,13 +223,14 @@ DOM 渲染流程
         text-align: center;
       }
 
+```
 <br/>
 
 **css 三角形的实现**
 
     三角形实现原理：宽度 width 为 0；height 为 0；（1）有一条横竖边（上下左右）的设置为 border-方向：长度 solid red，这个画的就是底部的直线。其他边使用 border-方向：长度 solid transparent。（2）有两个横竖边（上下左右）的设置，若斜边是在三角形的右边，这时候设置 top 或 bottom 的直线，和右边的斜线。若斜边是在三角形的左边，这时候设置 top 或 bottom 的直线，和左边的斜线。
 
-```
+```css
 #triangle-up {
 	width: 0;
 	height: 0;
@@ -230,8 +238,8 @@ DOM 渲染流程
 	border-right: 50px solid transparent;
 	border-bottom: 100px solid red;
 }
-
 ```
+
 
 <br/>
 
@@ -274,7 +282,8 @@ DOM 渲染流程
 
 **JS 实现深浅拷贝**
 
-```
+
+```javascript
 1.浅拷贝 实现
 
 let copy1 = {...{x:1}} bject.assign实现
@@ -288,11 +297,13 @@ let copy2=Object.assign({}, {x:1})
 let obj={a: 1, b: {x: 3}};
 
 JSON.parse(JSON.stringify(obj))
+
 ```
 
 2. 递归拷贝
 
-```
+
+```javascript
 function deepClone(obj) {
 	let copy = obj instanceof Array ? [] : {}
 	for (let i in obj) {
@@ -302,6 +313,7 @@ function deepClone(obj) {
 	return copy
 }
 ```
+
 
 **作用域和作用域链**
 
@@ -346,14 +358,17 @@ function deepClone(obj) {
 
 **微任务**
 
+```javascript
 process.nextTick
 
 MutationObserver
 
 Promise.then catch finally
+```
 
 **宏任务**
 
+```javascript
 I/O
 
 setTimeout
@@ -363,6 +378,7 @@ setInterval
 setImmediate
 
 requestAnimationFrame
+```
 
 执行完一轮宏任务执行微任务 继续执行宏任务 event loop~
 
@@ -388,6 +404,13 @@ DOM 事件流包括三个阶段:
 目标阶段：在目标节点上触发，称为“目标阶段”
 冒泡阶段：从目标节点传导回 window 对象（从底层传回上层），称为“冒泡阶段”（bubbling phase）。事件代理即是利用事件冒泡的机制把里层所需要响应的事件绑定到外层；
 
+
+**stopPropagation**
+event.stopPropagation();阻止事件冒泡。
+
+**stopImmediatePropagation**
+event.stopImmediatePropagation(); 阻止事件冒泡并且阻止该元素上同事件类型的监听器被触发。
+
 ![](https://img-blog.csdnimg.cn/2019011111581623.jpg)
 
 **事件委托**
@@ -399,6 +422,7 @@ DOM 事件流包括三个阶段:
 
 **ES6 的新增功能**
 
+```javascript
 1.Default Parameters（默认参数） in ES6
 
 2.Template Literals（模板对象） in ES6
@@ -417,6 +441,7 @@ DOM 事件流包括三个阶段:
 
 9.Modules （模块）in ES6
 
+```
 ```html
 import虽然属于声明命令，但它是和export命令配合使用的。export命令用于规定模块的对外接口，import命令用于输入其他模块提供的功能。
 ```
@@ -1642,8 +1667,10 @@ hooks 更多详细内容 [https://www.jianshu.com/p/e6265f3f2a81](https://www.ji
 如果认为在componentWillMount里发起请求能提早获得结果，这种想法其实是错误的，通常componentWillMount比componentDidMount早不了多少微秒，网络上任何一点延迟，这一点差异都可忽略不计。
 
 **看看react的生命周期：**
+```javascript
 
 **constructor() ----> componentWillMount() ----> render() ----> componentDidMount()**
+```
 
 上面这些方法的调用是有次序的，由上而下依次调用。
 
