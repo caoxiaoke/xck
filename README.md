@@ -406,9 +406,11 @@ DOM 事件流包括三个阶段:
 
 
 **stopPropagation**
+
 event.stopPropagation();阻止事件冒泡。
 
 **stopImmediatePropagation**
+
 event.stopImmediatePropagation(); 阻止事件冒泡并且阻止该元素上同事件类型的监听器被触发。
 
 ![](https://img-blog.csdnimg.cn/2019011111581623.jpg)
@@ -606,6 +608,20 @@ let iterator = o.createIterator([1, 2, 3]);
 这些示例使用了不同于之前的语法，但它们的功能实际上是等价的。在简写版本中，由于不使用function关键字来定义createlterator()方法，因此尽管可以在星号和方法名之间留白，但还是将星号紧贴在方法名之前
 
 **更多内容请看** [https://www.cnblogs.com/xiaohuochai/p/7253466.html](https://www.cnblogs.com/xiaohuochai/p/7253466.html "https://www.cnblogs.com/xiaohuochai/p/7253466.html")
+
+**浅谈JS中的装饰器**
+
+什么是装饰器？
+
+```html
+装饰器模式（Decorator Pattern）是一种结构型设计模式，旨在促进代码复用，可以用于修改现有的系统，希望在系统中为对象添加额外的功能，同时又不需要大量修改原有的代码。
+```
+
+JS中的装饰器是ES7中的一个新语法，可以对类、方法、属性进行修饰，从而进行一些相关功能定制, 它的写法与Java的注解（Annotation）类似，但是功能有比较大的区别。
+
+大家可能听说过 组合函数 和 高阶函数 的概念，也可以这么理解。
+
+[https://www.jianshu.com/p/c8a5d4f50780](浅谈JS中的装饰器 "https://www.jianshu.com/p/c8a5d4f50780")
 
 **src 和 href 区别**
 
