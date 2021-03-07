@@ -1625,9 +1625,10 @@ obj.showProper();
 
 <br/>
 
-##React
+## **React**
 
 **React(组件中的onClick)**
+
 JSX的onClick事件处理方式和HTML的onclick有很大不同。
 在HTML中直接使用onclick很不专业，原因如下
 
@@ -1646,8 +1647,7 @@ onClick挂载的每个函数，都可以控制在组件范围内，不会污染�
 
 **React Hooks的常见应用及一些原理**
 
-**	类组件（class）
-	类组件的缺点：**
+**	类组件（class）类组件的缺点：**
 
 	大型组件很难拆分和重构，也很难测试
 	业务逻辑分散在组件的各个方法中，导致重复逻辑或关联逻辑
