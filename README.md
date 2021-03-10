@@ -239,6 +239,59 @@ DOM 渲染流程
 	border-bottom: 100px solid red;
 }
 ```
+<br/>
+
+**关于CSS Modules全局污染解决**
+
+**问题：**
+
+当我们设置如下样式的时候，整个项目的所有表格的td都会按照下面的样式跟着改动。
+也就是说，我们要对元素标签进行设置的时候全局作用域的优点就变成了全局污染这个缺点了。
+
+```css
+tbody tr td{
+    text-align: center!important;
+    color: #00cc00
+  }
+```
+
+这就是css Modules的全局污染！
+按照正常的思维，我们在页面引入哪个css文件，就会只是在当前页面中起作用。（引入：import styles from '../styles.css';）
+
+**解决：**
+我们的解决方案是加上局部作用域:local看一下具体代码如何实现吧。
+
+**（1）:local(.类名)**
+
+```css
+:local(.biaoge-duli){
+  tbody tr td{
+    text-align: center!important;
+    color: #00cc00
+  }
+}
+```
+
+（2）页面引用
+
+```css
+import styles from '../styles.css';//对应的文件名
+```
+
+```html
+<Table className={styg['biaoge-duli']} />
+```
+
+对于这个问题就解决了。
+对于此类的问题，需要对标签的元素进行样式操作而又无法直接在对应的标签元素加上class名就这样解决了。
+
+最后，总结一下:local的用法。
+
+```css
+:local(.className) { background: red; }
+:local .className { color: green; }
+:local(.className .subClass) { color: green; }
+```
 
 
 <br/>
