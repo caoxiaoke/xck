@@ -413,6 +413,8 @@ function deepClone(obj) {
 1、JavaScript 语言是单线程的，同一个时间只能做一件事；
 2、遵循事件循环机制，当 JS 解析执行时，会被引擎分为两类任务，同步任务（synchronous） 和 异步任务（asynchronous）。对于同步任务来说，会被推到执行栈按顺序去执行这些任务。对于异步任务来说，当其可以被执行时，会被放到一个 任务队列（task queue） 里等待 JS 引擎去执行。当执行栈中的所有同步任务完成后，JS 引擎才会去任务队列里查看是否有任务存在，并将任务放到执行栈中去执行，执行完了又会去任务队列里查看是否有已经可以执行的任务。这种循环检查的机制，就叫做事件循环(Event Loop)。对于任务队列，其实是有更细的分类。其被分为 微任务（microtask）队列 & 宏任务（macrotask）队列。
 
+**同步任务**
+
 **微任务**
 
 ```javascript
@@ -500,6 +502,7 @@ event.stopImmediatePropagation(); 阻止事件冒泡并且阻止该元素上同�
 
 9.Modules （模块）in ES6
 ```
+
 ```html
 import虽然属于声明命令，但它是和export命令配合使用的。export命令用于规定模块的对外接口，import命令用于输入其他模块提供的功能。
 ```
@@ -550,6 +553,8 @@ WeakMap结构与Map结构类似，也是用于生成键值对的集合。
 
 不能遍历，方法有 get、set、has、delete。
 
+<br/>
+<br/>
 
 **ES6中的迭代器(Iterator)和生成器(Generator)**
 
