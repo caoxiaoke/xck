@@ -723,6 +723,91 @@ JS中的装饰器是ES7中的一个新语法，可以对类、方法、属性进
 
 [https://www.jianshu.com/p/c8a5d4f50780](浅谈JS中的装饰器 "https://www.jianshu.com/p/c8a5d4f50780")
 
+<br/>
+
+**JS ERROR错误捕获方式**
+
+**1、try-catch**
+
+总结: 只能捕获捉到运行时非异步错误，异步错误就显得无能为力，捕捉不到
+
+**2、window.onerror**
+
+同步错误捕获
+
+**3、资源加载错误**
+
+**object.onerror**
+
+如script，image等标签src引用，会返回一个event对象 ,TIPS: object.onerror不会冒泡到window对象，所以window.onerror无法监控资源加载错误
+
+```javascript
+var img = new Image();
+img.src = 'http://xxx.com/xxx.jpg';
+img.onerror = function(event) {
+    console.log(event);
+}
+```
+
+**performance.getEntries()**
+
+返回已成功加载的资源列表，然后自行做比对差集运算，核实哪些文件没有加载成功
+
+```javascript
+var result = [];
+window.performance.getEntries().forEach(function (perf) {
+    result.push({
+        'url': perf.name,
+        'entryType': perf.entryType,
+        'type': perf.initiatorType,
+        'duration(ms)': perf.duration
+    });
+});
+console.log(result);
+
+```
+
+**Error事件捕获 （全局监控静态资源异常）**
+
+```javascript
+window.addEventListener('error', (msg, url, row, col, error) => {
+  console.log('我知道 404 错误了');
+  console.log(
+    msg, url, row, col, error
+  );
+  return false;
+}, true);
+```
+
+**全局去捕获promise error**
+
+```javascript
+window.addEventListener("unhandledrejection", function(e) {
+    e.preventDefault()
+    console.log('我知道 promise 的错误了');
+    console.log(e.reason);
+    return true;
+});
+Promise.reject('promise error').catch((err)=>{
+    console.log(err);
+})
+new Promise((resolve, reject) => {
+    reject('promise error');
+}).catch((err)=>{
+    console.log(err);
+})
+new Promise((resolve) => {
+    resolve();
+}).then(() => {
+    throw 'promise error'
+});
+new Promise((resolve, reject) => {
+    reject(123);
+})
+
+```
+
+
 **src 和 href 区别**
 
 href 用于建立当前页面与引用资源之间的关系（链接），而 src 则会替换当前标签。遇到 href，页面会并行加载后续内容；而 src 则不同，浏览器需要加载完毕 src 的内容才会继续往下走。
