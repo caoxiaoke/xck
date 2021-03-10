@@ -779,7 +779,7 @@ window.addEventListener('error', (msg, url, row, col, error) => {
 }, true);
 ```
 
-**全局去捕获promise error**
+**4、全局去捕获promise error**
 
 ```javascript
 window.addEventListener("unhandledrejection", function(e) {
@@ -807,6 +807,7 @@ new Promise((resolve, reject) => {
 
 ```
 
+<br/>
 
 **src 和 href 区别**
 
