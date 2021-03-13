@@ -1273,6 +1273,7 @@ usedJSHeapSize: JS对象(包括V8引擎内部对象)占用的内存，不能大�
 
 **实例代码**
 
+```javascript
     // 计算加载时间
     function getPerformanceTiming() {
         var performance = window.performance;
@@ -1316,6 +1317,7 @@ usedJSHeapSize: JS对象(包括V8引擎内部对象)占用的内存，不能大�
         return times;
     }
 
+```
 <br/>
 
 **总结**
