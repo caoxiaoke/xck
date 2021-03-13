@@ -1164,6 +1164,13 @@ Performance是一个做前端性能监控离不开的API，最好在页面完全
 
 timing （PerformanceTiming）
 
+已废弃
+该特性已经从 Web 标准中删除，虽然一些浏览器目前仍然支持它，但也许会在未来的某个时间停止支持，请尽量不要使用该特性。
+
+该属性在 Navigation Timing Level 2 specification 中已经被废弃，请使用 Performance.timeOrigin 替代。
+
+**timeOrigin**
+
 从输入url到用户可以使用页面的全过程时间统计，会返回一个PerformanceTiming对象，单位均为毫秒
 
 ![https://images2015.cnblogs.com/blog/1025895/201705/1025895-20170515171943869-544403857.png](https://images2015.cnblogs.com/blog/1025895/201705/1025895-20170515171943869-544403857.png "https://images2015.cnblogs.com/blog/1025895/201705/1025895-20170515171943869-544403857.png")
