@@ -373,6 +373,21 @@ import styles from '../styles.css';//对应的文件名
 
 ## **JS | 区域**
 
+**Navigator.sendBeacon()**
+
+navigator.sendBeacon() 方法可用于通过HTTP将少量数据异步传输到Web服务器。
+
+navigator.sendBeacon(url, data);
+
+**url**
+
+url 参数表明 data 将要被发送到的网络地址。
+
+**data**
+
+data 参数是将要发送的 ArrayBufferView 或 Blob, DOMString 或者 FormData 类型的数据。
+
+<br/>
 
 **JS 数据类型：JS 的数据类型有几种？**
 
