@@ -1186,7 +1186,6 @@ async是在加载完之后立即执行，如果是多个，执行顺序和加载
 （2）304协商缓存：问一下服务器缓存中的能不能用
 
 （3）http请求头：
-
 ```javascript
 Cache-Control: no-store            // 禁止浏览器缓存
 Cache-Control: no-cache            // 不允许直接缓存，即协商缓存
@@ -1198,13 +1197,19 @@ expires: 时间                       // 格林威治时间，在之前有效
 ```
 
 （4）响应头
-
 ```javascript
 Last-Modified                      // 通知资源最后修改的时间
 ETag                               // 文章内容修改
 ```
 
 **缓存先expires->Last-Modified->ETag 都没过期，返304响应**
+
+**4)预解析DNS**
+
+```javascript
+<meta http-quiv="x-dns-prefetch-control" content="on">         // 强制打开预解析DNS，http是默认开启的，https是默认关闭的
+<link rel="dns-prefetch" href="//local_name.com">              // 将里面的地址预解析
+```
 
 <br/>
 
