@@ -53,6 +53,57 @@ DOM 渲染流程
     Firefox 使用 Geoko——Mozilla 自主研发的渲染引擎
     Safari 和 Chrome 都使用 webkit，Webkit 是一款开源渲染引擎
 
+**dom + cssom -> reder tree -> layout**
+
+浏览器渲染过程
+
+二、渲染机制
+
+1、DOCTYPE作用：用来声明文档类型和DTD规范，用途：文件的合法性验证
+
+HTML4.0有一个严格模式（不包括展示性的和弃用的元素）和一个传统模式（包括）
+
+2、浏览器如何渲染：
+
+（1）解析HTML形成DOM Tree
+
+（2）解析css产生css规则树（css rule tree）
+
+（3）根据DOM Tree和css规则树来构造rendering Tree
+
+（4）下一步操作称之为Layout，用来计算每个节点在屏幕中的位置
+
+（5）绘制，即遍历render树，使用UI后端层绘制每个节点
+
+Reflow：重排，当某个部分发生了变化影响了布局，就需要倒回去重新渲染
+
+原因：
+
+（1）增加、较少DOM节点
+
+（2）修改css样式的时候
+
+（3）修改网页的默认字体时
+
+避免：
+
+（1）HTML元素使用fixed或absolute，不会引起reflow
+
+（2）使用预先定义好的css的class，修改DOM的className
+
+Repaint：重绘，只改变某个元素的背景颜色，不影响元素周围或内部布局属性，将只会引起浏览器的repaint，重画某一部分
+
+原因：
+
+（1）操作DOM节点
+
+（2）修改css样式
+
+减少repaint：
+
+（1）新建一个节点，将最终的结果放进去，一次性插入
+
+
 **DOM 渲染流程：**
 
     1、浏览器解析 html 源码，然后创建一个 DOM 树。
@@ -558,7 +609,6 @@ WeakMap结构与Map结构类似，也是用于生成键值对的集合。
 
 **ES6中的迭代器(Iterator)和生成器(Generator)**
 
-
 	新的数组方法和新的集合类型(如Set集合与Map集合)都依赖迭代器的实现，这个新特性对于高效的数据处理而言是不可或缺的，在语言的其他特性中也都有迭代器的身影：新的for-of循环、展开运算符(...)，甚至连异步编程都可以使用迭代器。
 	下面是一段标准的for循环代码，通过变量i来跟踪colors数组的索引，循环每次执行时，如果i小于数组长度len则加1，并执行下一次循环
 
@@ -725,7 +775,7 @@ JS中的装饰器是ES7中的一个新语法，可以对类、方法、属性进
 
 <br/>
 
-**JS ERROR错误捕获方式**
+**JS 错误监控**
 
 **1、try-catch**
 
@@ -807,7 +857,26 @@ new Promise((resolve, reject) => {
 
 ```
 
+**5、跨域错误能捕获吗？可以**
+
+（1）客户端：在script标签中加crossorigin属性
+
+```javascript
+<script crossorigin  src="http://www.lmj.com/demo/crossoriginAttribute/error.js"></script>
+```
+
+（2）服务端：在响应头Access-Control-Allow-Origin:域名或*
+
+
+
+**6、上报错误的基本原理**
+
+（1）采用Ajax通信的方式上报
+
+（2）利用Image对象上报
+
 <br/>
+
 
 **src 和 href 区别**
 
@@ -1071,6 +1140,73 @@ Promise.prototype.then = function (onFulfilled, onRejected) {
 <br/>
 
 ## **性能优化问题 | 区域**
+
+**页面性能**
+
+**提升页面性能的方法有哪些**
+
+资源压缩合并，减少HTTP请求.(把资源文件变小)
+
+非核心代码异步加载->异步加载的方式->异步加载的区别
+
+*利用浏览器缓存->缓存的分类->缓存原理
+
+使用CDN(属于网络优化)
+
+预解析DNS
+
+<meta http-equiv="x-dns-prefetch-control" content="on">
+
+<link rel="dns-prefetch" href="//host_name_to_prefetch.com">
+
+注：当一次打开时，浏览器缓存起不到任何作用，但是使用CDN可以起到作用。
+
+**2)异步加载**
+
+**异步加载的方式：**
+
+动态脚本加载(动态创建结点)
+
+defer
+
+async
+
+**异步加载的区别:**
+
+defer在HTML解析之后才会执行，如果是多个，按照加载顺序依次执行。
+
+async是在加载完之后立即执行，如果是多个，执行顺序和加载顺序无关。
+
+**3)浏览器缓存**
+
+缓存
+
+（1）强缓存：直接从缓存中取
+
+（2）304协商缓存：问一下服务器缓存中的能不能用
+
+（3）http请求头：
+
+```javascript
+Cache-Control: no-store            // 禁止浏览器缓存
+Cache-Control: no-cache            // 不允许直接缓存，即协商缓存
+Cache-Control: max-age             // 秒，缓存的有效时间
+pragma: no-cache                   // 禁止浏览器缓存
+
+expires: 时间                       // 格林威治时间，在之前有效
+优先级：pragma>Cache-Control>expires
+```
+
+（4）响应头
+
+```javascript
+Last-Modified                      // 通知资源最后修改的时间
+ETag                               // 文章内容修改
+```
+
+**缓存先expires->Last-Modified->ETag 都没过期，返304响应**
+
+<br/>
 
 **防抖(debounce)**
 
@@ -1366,12 +1502,30 @@ a.push(4,5,6);
 1、如果不设置有效期，万一用户获取到用户的 Cookie 后，就可以一直使用用户身份登录。
 2、在设置 Cookie 认证的时候，需要加入两个时间，一个是“即使一直在活动，也要失效”的时间，一个是“长时间不活动的失效时间”，并在 Web 应用中，首先判断两个时间是否已超时，再执行其他操作。
 
-**XSRF 攻击**
+**CSRF  | XSRF 跨站请求伪造攻击**
 
-1、检测请求头中的 Referer 字段
-2、添加检验 token
+原理：
 
-**XSS 攻击**
+（1） 用户C打开浏览器，访问受信任网站A，输入用户名和密码请求登录网站A；
+
+（2）在用户信息通过验证后，网站A产生Cookie信息并返回给浏览器，此时用户登录网站A成功，可以正常发送请求到网站A； （3）用户未退出网站A之前，在同一浏览器中，打开一个TAB页访问网站B；
+
+（4）网站B接收到用户请求后，返回一些攻击性代码，并发出一个请求要求访问第三方站点A；
+
+（5）浏览器在接收到这些攻击性代码后，根据网站B的请求，在用户不知情的情况下携带Cookie信息，向网站A发出请求。网站A并不知道该请求其实是由B发起的，所以会根据用户C的Cookie信息以C的权限处理该请求，导致来自网站B的恶意代码被执行。 
+
+防御：
+
+（1）验证 HTTP Referer 字段，判断页面来源
+
+（2）在请求地址中添加 token 并验证；
+
+（3）在 HTTP 头中自定义属性并验证
+
+
+**XSS 跨站脚本攻击 **
+
+原理：向页面注入脚本，（如：评论区）
 
 1、可以合理利用现有成熟框架、开启自带的 HTML 转义功能，过滤特殊字符。
 2、校验用户输入的特殊字符
