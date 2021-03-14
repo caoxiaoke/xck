@@ -2403,11 +2403,97 @@ seesionStorae：通过存在服务器的信息进行表示，有实效性。
 
 其实在以上（除账号体系登录的情况下）几种无状态用户的情况下，都不是最佳方案！
 
-今天给大家介绍一种 murmurhash3 算法 生成用户指纹id库
+今天给大家介绍一种 murmurhash3 算法 ，fingerprintjs生成用户指纹id库，通过几十种信息组合，降低id 重复率。
 
 [fingerprintjs](https://github.com/fingerprintjs/fingerprintjs "fingerprintjs")
 
 [https://github.com/pid/murmurHash3js](https://github.com/pid/murmurHash3js "https://github.com/pid/murmurHash3js")
+
+
+```html
+1、User Agent
+
+2、语言
+
+3、颜色深度
+
+4、屏幕分辨率
+
+5、时区
+
+6、是否具有会话存储
+
+7、是否具有本地存储
+
+8、是否具有索引DB
+
+9、IE是否指定AddBehavior
+
+10、是否有打开的DB
+
+11、CPU类
+
+12、平台
+
+13、是否DoNotTrack
+
+14、已安装的Flash字体列表
+
+15、使用JS/CSS检测到的字体列表（最多可检测到Flash之外的500种字体）
+
+16、Canvas指纹
+
+17、WebGL指纹
+
+18、浏览器的插件信息
+
+19、是否安装AdBlock
+
+20、用户是否篡改了语言
+
+21、用户是否篡改了屏幕分辨率
+
+22、用户是否篡改了操作系统
+
+23、用户是否篡改了浏览器
+
+24、触摸屏检测和能力
+```
+
+一般情况下，JS字体检测最多可检测65种已安装的字体。用户可通过使用extendedFontList: true选项提升字体检测能力，可提升到500种。
+
+**更多指纹资源**
+
+```html
+
+1、多显示器检测
+
+2、Silverlight集成
+
+3、Flash linux内核版本
+
+4、内部哈希表执行检测
+
+5、WebRTC指纹
+
+6、Math常数
+
+7、可访问性指纹
+
+8、相机信息
+
+9、DRM支持
+
+10、加速器支持
+
+11、虚拟键盘
+
+12、手势列表（触摸设备）
+
+13、像素密度
+
+14、视频和音频编解码器的可用性
+```
 
 **这里有个小的hack  需要处理，下面是我测试的安卓和苹果的微信浏览器用fingerprintjs2.js生成的系统浏览器UA，只有网络这里需要更改。安卓其他浏览器测试倒是没发现有NetType/WIFI字段。**
 
