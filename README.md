@@ -1,6 +1,6 @@
 # **前端日常总结大全**
 
-Hi，大家好，这里是我的工作日常记录（总结）部分内容来自于大佬，欢迎大家参观，主要内容分为：HTML（layout）、CSS、JS、性能优化问题、算法、网络安全、HTTP、浏览器、React 、闲聊。
+Hi，大家好，这里是我的工作日常记录（总结）部分内容来自于大佬，欢迎大家参观，主要内容分为：HTML（layout）、CSS、JS、性能优化问题、算法、网络安全、HTTP、浏览器、React 、闲聊问题。
 
 <br/>
 
@@ -2379,14 +2379,85 @@ componentDidMount方法中的代码，是在组件已经完全挂载到网页上
 
 <br/>
 
-<br/>
-**未完待续～**
 
-<br/>
 
 <br/>
 
 ## **闲聊 | 区域**
+
+**1、关于埋点或者无账号登录状态下如何确定用户标识信息 | 指纹ID**
+
+UV和PV埋点的方式相同，唯一不同的地方就是UV需要在PV的基础上通过唯一标示进行筛选。统计有多少个唯一标示而得UV的数量，一般我们常见的唯一标示如下：
+
+手机号：用户登录页面后依据他绑定的手机号来进行统计，但是如果用户未登录将无法统计；
+
+cookie：通过用户浏览器上的cookie作为唯一标示，但因为cookie是存在用户浏览器中容易被修改；
+
+localStorage：通过在浏览器在本地存储一个长期唯一标示，但是可以手动清理；
+
+IP:通过访问页面ip地址进行区分，如果ip变更将另行计算；
+
+seesionStorae：通过存在服务器的信息进行表示，有实效性。
+
+这5个就是我们常用作为UV唯一标示的，他们推荐使用的优先级手机>ip>local>cookie>seesion。
+
+其实在以上（除账号体系登录的情况下）几种无状态用户的情况下，都不是最佳方案！
+
+今天给大家介绍一种 murmurhash3 算法 生成用户指纹id库
+
+[https://github.com/fingerprintjs/fingerprintjs](http://https://github.com/fingerprintjs/fingerprintjs "https://github.com/fingerprintjs/fingerprintjs")
+
+[https://github.com/pid/murmurHash3js](https://github.com/pid/murmurHash3js "https://github.com/pid/murmurHash3js")
+
+**这里有个小的hack  需要处理，下面是我测试的安卓和苹果的微信浏览器用fingerprintjs2.js生成的系统浏览器UA，只有网络这里需要更改。安卓其他浏览器测试倒是没发现有NetType/WIFI字段。**
+
+**安卓4G微信浏览器生成的userAgent**
+
+```javascript
+Mozilla/5.0 (Linux; Android 10; GM1910 Build/QKQ1.190716.003; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.126 MQQBrowser/6.2 TBS/045008 Mobile Safari/537.36 MMWEBID/6063 MicroMessenger/7.0.8.1540(0x27000834) Process/tools NetType/4G Language/zh_CN ABI/arm64
+```
+
+**安卓wifi微信浏览器生成的userAgent**
+
+```javascript
+
+Mozilla/5.0 (Linux; Android 10; GM1910 Build/QKQ1.190716.003; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.126 MQQBrowser/6.2 TBS/045008 Mobile Safari/537.36 MMWEBID/6063 MicroMessenger/7.0.8.1540(0x27000834) Process/tools NetType/WIFI Language/zh_CN ABI/arm64"
+```
+
+**苹果wifi微信浏览器生成的userAgent**
+
+```javascript
+Mozilla/5.0 (iPhone; CPU iPhone OS 12_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/7.0.8(0x17000820) NetType/WIFI Language/zh_CN
+```
+
+**苹果4G微信浏览器生成的userAgent**
+
+```javascript
+Mozilla/5.0 (iPhone; CPU iPhone OS 12_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/7.0.8(0x17000820) NetType/4G Language/zh_CN
+```
+
+官方给的演示代码生成的指纹ID在大部分浏览器都没问题，就是在微信浏览器里因为UA多了网络字段，所以导致生成的ID不一样。把NetType/**网络部分替换成空，就能确保微信浏览器里切换4G或者WIFI网络后，指纹ID也能保持一致了。
+
+```javascript
+Fingerprint2.get(function(components) {
+  const values = components.map(function(component,index) {
+    if (index === 0) { //把微信浏览器里UA的wifi或4G等网络替换成空,不然切换网络会ID不一样
+      return component.value.replace(/\bNetType\/\w+\b/, '')
+    }
+    return component.value
+  })
+  // 生成最终id murmur   
+  const murmur = Fingerprint2.x64hash128(values.join(''), 31)
+})
+```
+
+部分来自：https://www.xiedandan.com/post-11.html
+
+<br/>
+
+**未完待续～**
+
+<br/>
 
 **前端技术专家**
 
