@@ -2405,7 +2405,7 @@ seesionStorae：通过存在服务器的信息进行表示，有实效性。
 
 今天给大家介绍一种 murmurhash3 算法 生成用户指纹id库
 
-[https://github.com/fingerprintjs/fingerprintjs](http://https://github.com/fingerprintjs/fingerprintjs "https://github.com/fingerprintjs/fingerprintjs")
+[fingerprintjs](https://github.com/fingerprintjs/fingerprintjs "fingerprintjs")
 
 [https://github.com/pid/murmurHash3js](https://github.com/pid/murmurHash3js "https://github.com/pid/murmurHash3js")
 
