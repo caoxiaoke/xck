@@ -1508,8 +1508,73 @@ function removeImage() {
 组织好你的逻辑，避免死循环等造成浏览器卡顿，崩溃的问题。
 
 <br/>
-<br/>
 
+**V8 的垃圾回收机制**
+
+V8 的垃圾回收策略主要基于分代式垃圾回收机制。**主要将内存分为新生代和老生代两代。**
+
+[![图片](https://upload-images.jianshu.io/upload_images/8037680-10ffd2d6c0ada9d2.image?imageMogr2/auto-orient/strip|imageView2/2/w/1111/format/webp "图片")](https://upload-images.jianshu.io/upload_images/8037680-10ffd2d6c0ada9d2.image?imageMogr2/auto-orient/strip|imageView2/2/w/1111/format/webp "图片")
+
+**新生代空间（Young Generaion）**
+特点：
+
+管理对象存活时间较短
+
+占用空间比老生代空间小很多
+
+垃圾回特别频繁
+
+**新生代空间的垃圾回收采用Scavenge 算法，其工作原理如下：**
+
+将新生代空间分为两个空间，称为semispace，处于使用状态的叫做 From 空间，处于闲置的叫 To 空间，当我们分配对象时，先是在 From 空间中进行分配。
+
+[![](https://upload-images.jianshu.io/upload_images/8037680-6ae9e45b5b7e7e83.image?imageMogr2/auto-orient/strip|imageView2/2/w/1111/format/webp)](https://upload-images.jianshu.io/upload_images/8037680-6ae9e45b5b7e7e83.image?imageMogr2/auto-orient/strip|imageView2/2/w/1111/format/webp)
+
+开始垃圾回收时，会检查 From 空间中的存活对象，这些存活对象将被复制到 To 空间中，然后释放 From 空间中的内存。
+[![](https://upload-images.jianshu.io/upload_images/8037680-31acf51487cdd135.image?imageMogr2/auto-orient/strip|imageView2/2/w/609/format/webp)](https://upload-images.jianshu.io/upload_images/8037680-31acf51487cdd135.image?imageMogr2/auto-orient/strip|imageView2/2/w/609/format/webp)
+
+[![](https://upload-images.jianshu.io/upload_images/8037680-f364e492c517aa46.image?imageMogr2/auto-orient/strip|imageView2/2/w/609/format/webp)](https://upload-images.jianshu.io/upload_images/8037680-f364e492c517aa46.image?imageMogr2/auto-orient/strip|imageView2/2/w/609/format/webp)
+
+From 空间与 To 空间对换
+
+[![](https://upload-images.jianshu.io/upload_images/8037680-1d844cb52d131435.image?imageMogr2/auto-orient/strip|imageView2/2/w/609/format/webp)](https://upload-images.jianshu.io/upload_images/8037680-1d844cb52d131435.image?imageMogr2/auto-orient/strip|imageView2/2/w/609/format/webp)
+
+**从上面的过程我们可以看到，Scavenge 算法是典型的牺牲空间换取时间的算法。缺点是只能使用堆内存中的一半，优点是在时间效率上有优异的表现。**
+
+**老生代空间（ OldGeneraion）**
+
+在新生代空间中生命周期较长的对象会被复制到老生代空间中，这个过程叫晋升。对象晋升的条件主要有两个：
+
+**对象是否经历过一次 Scavenge 回收。** 对象从 From 空间复制到 To 空间时，会检查它的内存地址来判断这个对象是否已经经历过一次 Scavenge 回收。如果经历过，就直接复制到老生代空间中，而不是 To 空间。
+
+**To 空间的内存使用占比是否超过 To 空间的 25%。** 对象从 From 空间复制到 To 空间时，发现 To 空间的内存占比已经超过限制。因为To 空间将会变成 From空间，为了不影响后续的内存分配，会直接晋升到老生代空间中。
+
+对于老生代空间，由于存活对象占比较大，再采用Scavenge的方式会有两个问题：
+
+存活对象比较多，复制存活对象的效率会很低
+
+要拆分两个 semispace 空间，比较浪费
+
+为此，老生代中主要采用标记清除（Mark-Sweep）和标记整理（Mark-Compact）相结合的方式进行垃圾回收，其工作原理如下：
+
+在标记阶段遍历堆中的所有对象，并标记活着的对象，在随后的清除阶段中，只清除没有被标记的对象。标记后的示意图如下：
+
+[![](https://upload-images.jianshu.io/upload_images/8037680-b250acbdb2af7a53.image?imageMogr2/auto-orient/strip|imageView2/2/w/976/format/webp)](https://upload-images.jianshu.io/upload_images/8037680-b250acbdb2af7a53.image?imageMogr2/auto-orient/strip|imageView2/2/w/976/format/webp)
+
+黄色部分为标记活跃的对象，深灰色部分为标记死亡的对象。
+
+标记清除（Mark-Sweep）最大的问题在于，清除标记死亡的对象后，内存不连续，这种碎片空间会对后续的内存分配造成问题。
+
+为了解决内存碎片的问题，标记整理（Mark-Compact）被提出来。它会在标记完成后，将存活的对象移动到一端，然后释放存活对象这一端之外的空间。
+[![](https://upload-images.jianshu.io/upload_images/8037680-658ed4db59522c57.image?imageMogr2/auto-orient/strip|imageView2/2/w/976/format/webp)](https://upload-images.jianshu.io/upload_images/8037680-658ed4db59522c57.image?imageMogr2/auto-orient/strip|imageView2/2/w/976/format/webp)
+
+[![](https://upload-images.jianshu.io/upload_images/8037680-3b89cab653d061d0.image?imageMogr2/auto-orient/strip|imageView2/2/w/976/format/webp)](https://upload-images.jianshu.io/upload_images/8037680-3b89cab653d061d0.image?imageMogr2/auto-orient/strip|imageView2/2/w/976/format/webp)
+
+**增量标记（Incremental Marking）**
+
+在进行上面 V8垃圾回收操作的时候，需要将应用逻辑暂停，但是由于老生代空间很大，且存活对象很多，为了避免长时间的停顿，将原本一次性完成的操作改为增量标记，即拆分为许多小“步进”，每做完一次“步进”，让应用逻辑执行一会儿，交替执行，直到垃圾回收执行完成。
+
+<br/>
 
 **提升页面性能的方法有哪些**
 
