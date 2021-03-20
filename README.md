@@ -314,6 +314,7 @@ tbody tr td{
 按照正常的思维，我们在页面引入哪个css文件，就会只是在当前页面中起作用。（引入：import styles from '../styles.css';）
 
 **解决：**
+
 我们的解决方案是加上局部作用域:local看一下具体代码如何实现吧。
 
 **（1）:local(.类名)**
@@ -347,7 +348,6 @@ import styles from '../styles.css';//对应的文件名
 :local .className { color: green; }
 :local(.className .subClass) { color: green; }
 ```
-
 
 <br/>
 
@@ -1575,6 +1575,7 @@ From 空间与 To 空间对换
 在进行上面 V8垃圾回收操作的时候，需要将应用逻辑暂停，但是由于老生代空间很大，且存活对象很多，为了避免长时间的停顿，将原本一次性完成的操作改为增量标记，即拆分为许多小“步进”，每做完一次“步进”，让应用逻辑执行一会儿，交替执行，直到垃圾回收执行完成。
 
 <br/>
+<br/>
 
 **提升页面性能的方法有哪些**
 
@@ -1673,6 +1674,26 @@ function debounce(fn,delay){
     }
 }
 
+		function debounce(fn, delay) {
+			var timeout = null; // 创建一个标记用来存放定时器的返回值
+			return function(e) {
+				// 每当用户输入的时候把前一个 setTimeout clear 掉
+				clearTimeout(timeout);
+				// 然后又创建一个新的 setTimeout, 这样就能保证interval 间隔内如果时间持续触发，就不会执行 fn 函数
+				timeout = setTimeout(() => {
+					fn.apply(this, arguments);
+				}, delay);
+			};
+		}
+
+// 处理函数
+		function handle() {
+			console.log('防抖：', Math.random());
+		}
+
+		//滚动事件
+		window.addEventListener('scroll', debounce(handle, 500));
+		
 ```
 
 **节流(throttle)**
@@ -1699,7 +1720,35 @@ function throttle(fn,delay){
         }, delay)
     }
 }
+
+
+	//节流函数
+		function throttle(fn, delay) {
+			let timer = null;
+			let startTime = Date.now();
+			return function() {
+				let curTime = Date.now();
+				let remainning = delay - (curTime - startTime);
+				let context = this;
+				let args = arguments;
+				clearTimeout(timer);
+				if(remainning <= 0) {
+					fn.apply(context, args);
+					startTime = Date.now();
+				} else {
+					timer = setTimeout(fn, remainning)
+				}
+			}
+		}
+
+		function sayHi(e) {
+			console.log('节流：');
+		}
+
+		window.addEventListener('resize', throttle(sayHi, 500));
 ```
+<br/>
+<br/>
 
 **JS 更新 DOM 后页面及时渲染问题**
 
@@ -1712,6 +1761,8 @@ function throttle(fn,delay){
 采用 alert 语句进行提示，alert 语句会 block 住 js 线程，将执行权让给 gui 渲染线程，执行 alert 之后浏览器会把这个语句之前的所有对 dom 的操作都进行体现。这个方法虽然简单有效，但不具有可操作性，首先 alert 是简单粗暴的一种提示方式，反倒降低了用户体验，其次不能适用在各种场景中，不可能在系统中无缘无故地弹出个 alert 框只是为了强制重画更新的 dom。所以，该方法不值得推广。
 
 采用 setTimeout 方法，这是普遍的解决方案。把计算逻辑和隐藏提示的方法放在 setTimeout 里可以解决这个问题，因为 setTimeout 启用了一个定时器，指定在经过一段时间后执行某段逻辑，从而使这段逻辑跳离了当前函数体，使当前函数可以快速地执行完，之后如果 js 引擎线程中没有排队的任务，则 gui 渲染线程得到执行，showTip 相关的 dom 更新得到体现。当定时器到时后，js 线程又得到了新的任务，从而使计算逻辑和隐藏提示的操作得到执行。
+
+<br/>
 
 **前端页面加载阻塞渲染问题，如何解决？**
 
@@ -1758,6 +1809,9 @@ DOM 树和 CSSOM 渲染完成后合并生成 Render 树
 
 重排一定会触发重绘，重绘不一定会触发重排 。
 
+<br/>
+
+
 **阻塞问题总结**
 
 阻塞发生的情况：
@@ -1787,6 +1841,8 @@ css 是由单独的下载线程异步下载的。
 
 ![](https://img2018.cnblogs.com/blog/1659314/201908/1659314-20190822111456778-550471352.jpg)
 
+<br/>
+
 **性能分析 chrome devtool lighthouse**
 
 **浏览器渲染过程与性能优化**
@@ -1797,6 +1853,106 @@ https://juejin.cn/post/6844904040346681358#heading-27
 <br/>
 
 ## **算法 | 区域**
+
+**查找字符最多字符**
+
+```javascript
+		var str = '23weqreqwelkawemrmnqweowerewmrwes';
+		var obj = {};
+		for(var i = 0; i < str.length; i++) {
+			var s = str.charAt(i);
+			obj[s] ? obj[s]++ : obj[s] = 1;
+		}
+		console.log(obj);
+
+		var max = [];
+		var name = '';
+		for(var c in obj) {
+			if(obj[c] > max) {
+				max = obj[c];
+				name = c;
+			}
+		}
+		console.log('name=' + name + "&max=" + max)
+```
+<br/>
+		
+		
+**求 1-100 的和**
+
+```javascript
+		function sum(n) {
+			if(n == 1) return n;
+			var m = n + sum(n - 1)
+			//			console.log(m)
+			return m;
+		}
+		console.log(sum(100));
+```
+
+<br/>
+
+
+**经典案例 ： 斐波拉契数列**
+
+**1,1,2,3,5,8,13,21,34,55,89...求第 n 项**
+
+```javascript
+function fib(n) {
+			if(n === 1 || n === 2) return 1;
+			return fib(n - 1) + fib(n - 2)
+		}
+		console.log(fib(10))
+```
+<br/>
+**经典案例 3： 爬楼梯**
+
+**JS 递归 假如楼梯有 n 个台阶，每次可以走 1 个或 2 个台阶，请问走完这 n 个台阶有几种z法**
+
+```javascript
+	function climbStairs(n) {
+			if(n === 1) return 1;
+			if(n === 2) return 2;
+			return climbStairs(n - 1) + climbStairs(n - 2)
+		}
+		console.log(climbStairs(6))
+```
+<br/>
+
+**经典案例 ： 深拷贝**
+
+**原理: clone(o) = new Object; 返回一个对象
+**
+```javascript
+		var obj = {
+			a: 1,
+			b: 2,
+			c: {
+				e: 1,
+				f: 2
+			},
+			d: [1, 2, 3],
+			e: function() {}
+		};
+
+		function clone(o) {
+			var temp = {};
+			for(var i in o) {
+				if(typeof o[i] == 'object') {
+					temp[i] = clone(o[i])
+				} else {
+					temp[i] = o[i]
+				}
+			}
+			return temp;
+		}
+		console.log(obj)
+
+		for(var i in obj) {
+			console.log(i)
+		}
+```
+<br/>
 
 **接雨水**
 
@@ -1811,6 +1967,7 @@ https://juejin.cn/post/6844904040346681358#heading-27
 解释：上面是由数组 [0,1,0,2,1,0,1,3,2,1,2,1] 表示的高度图，在这种情况下，可以接 6 个单位的雨水（蓝色部分表示雨水）。
 
 **示例 2：**
+
 输入：height = [4,2,0,3,2,5]
 输出：9
 
@@ -2003,6 +2160,34 @@ a.push(4,5,6);
 
 ## **浏览器| 网络 HTTP | 区域**
 
+**浏览器多线程**
+
+**1.JS引擎线程(js引擎有多个线程，一个主线程，其它的后台配合主线程)**
+
+作用：执行js任务(执行js代码，用户输入，网络请求)
+
+**2.UI渲染线程（GUI）**
+
+作用：渲染页面(js可以操作dom，影响渲染，所以js引擎线程和UI线程是互斥的。js执行时会阻塞页面的渲染。)
+
+**3.浏览器事件触发线程**
+
+作用：控制交互，响应用户
+
+**4.HTTP请求线程**
+
+作用：ajax请求等
+
+**5.定时触发器线程**
+
+作用：setTimeout和setInteval
+
+**6.事件轮询处理线程**
+
+作用：轮询消息队列，event loop
+
+<br/>
+
 **一、TCP 与 UDP 差异**
 
 1.TCP 是面向连接的可靠传输，UDP 是面向无连接的不可靠传输
@@ -2099,8 +2284,10 @@ HTTP 先与 SSL 通信，再由 SSL 与 TCP 通信
 
 简介:
 
-对称加密: 加密和解密的秘钥使用的是同一个.
-非对称加密:  与对称加密算法不同，非对称加密算法需要两个密钥：公开密钥（publickey）和私有密钥（privatekey）。
+**对称加密: 加密和解密的秘钥使用的是同一个.**
+
+**非对称加密:  与对称加密算法不同，非对称加密算法需要两个密钥：公开密钥（publickey）和私有密钥（privatekey）。**
+
 对称加密算法: 密钥较短，破译困难，除了数据加密标准（DES），另一个对称密钥加密系统是国际数据加密算法（IDEA），它比 DES 的加密性好，且对计算机性能要求也没有那么高.
 
 优点:
@@ -2127,7 +2314,7 @@ HTTP 先与 SSL 通信，再由 SSL 与 TCP 通信
 
 常见的非对称加密算法有: RSA、ECC（移动设备用）、Diffie-Hellman、El Gamal、DSA（数字签名用）
 
-Hash 算法（摘要算法）
+**Hash 算法（摘要算法）**
 
 Hash 算法特别的地方在于它是一种单向算法，用户可以通过 hash 算法对目标信息生成一段特定长度的唯一 hash 值，却不能通过这个 hash 值重新获得目标信息。因此 Hash 算法常用在不可还原的密码存储、信息完整性校验等。
 
@@ -2515,6 +2702,35 @@ obj.showProper();
 <br/>
 
 ## **React**
+
+**React Fiber 原理介绍**
+
+**在 React Fiber 架构面世一年多后，最近 React 又发布了最新版 16.8.0，又一激动人心的特性：React Hooks 正式上线，让我升级 React 的意愿越来越强烈了。在升级之前，不妨回到原点，了解下人才济济的 React 团队为什么要大费周章，重写 React 架构，而 Fiber 又是个什么概念。**
+
+**这是React 核心算法的一次大的更新，重写了 React 的 reconciliation 算法。reconciliation 算法是用来更新并且渲染DOM树的算法。以前React 15.x的版本使用的算法称为“stack reconciliation”，现在称为“fiber reconciler”。
+**
+fiber reconciler主要的特点是可以把更新流程拆分成一个一个的小的单元进行更新，并且可以中断，转而去执行高优先级的任务或者浏览器的动画渲染等，等主线程空闲了再继续执行更新。
+
+**React 15 的问题**
+
+在页面元素很多，且需要频繁刷新的场景下，React 15 会出现掉帧的现象。
+
+其根本原因，是大量的同步计算任务阻塞了浏览器的 UI 渲染。默认情况下，JS 运算、页面布局和页面绘制都是运行在浏览器的主线程当中，他们之间是互斥的关系。如果 JS 运算持续占用主线程，页面就没法得到及时的更新。当我们调用setState更新页面的时候，React 会遍历应用的所有节点，计算出差异，然后再更新 UI。整个过程是一气呵成，不能被打断的。如果页面元素很多，整个过程占用的时机就可能超过 16 毫秒，就容易出现掉帧的现象。
+
+**解题思路**
+
+解决主线程长时间被 JS 运算占用这一问题的基本思路，是将运算切割为多个步骤，分批完成。也就是说在完成一部分任务之后，将控制权交回给浏览器，让浏览器有时间进行页面的渲染。等浏览器忙完之后，再继续之前未完成的任务。
+
+旧版 React 通过递归的方式进行渲染，使用的是 JS 引擎自身的函数调用栈，它会一直执行到栈空为止。而Fiber实现了自己的组件调用栈，它以链表的形式遍历组件树，可以灵活的暂停、继续和丢弃执行的任务。实现方式是使用了浏览器的requestIdleCallback这一 API。官方的解释是这样的：
+
+window.requestIdleCallback()会在浏览器空闲时期依次调用函数，这就可以让开发者在主事件循环中执行后台或低优先级的任务，而且不会对像动画和用户交互这些延迟触发但关键的事件产生影响。函数一般会按先进先调用的顺序执行，除非函数在浏览器调用它之前就到了它的超时时间。
+
+
+本文从 React 15 存在的问题出发，介绍 React Fiber 解决问题的思路，并介绍了 Fiber Reconciler 的工作流程。从Stack Reconciler到Fiber Reconciler，源码层面其实就是干了一件递归改循环的事情.
+
+[React Fiber 原理介绍](https://segmentfault.com/a/1190000020736966?utm_source=sf-related "React Fiber 原理介绍")
+
+<br/>
 
 **React(组件中的onClick)**
 
