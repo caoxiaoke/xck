@@ -2707,8 +2707,8 @@ obj.showProper();
 
 **在 React Fiber 架构面世一年多后，最近 React 又发布了最新版 16.8.0，又一激动人心的特性：React Hooks 正式上线，让我升级 React 的意愿越来越强烈了。在升级之前，不妨回到原点，了解下人才济济的 React 团队为什么要大费周章，重写 React 架构，而 Fiber 又是个什么概念。**
 
-**这是React 核心算法的一次大的更新，重写了 React 的 reconciliation 算法。reconciliation 算法是用来更新并且渲染DOM树的算法。以前React 15.x的版本使用的算法称为“stack reconciliation”，现在称为“fiber reconciler”。
-**
+这是React 核心算法的一次大的更新，重写了 React 的 reconciliation 算法。reconciliation 算法是用来更新并且渲染DOM树的算法。以前React 15.x的版本使用的算法称为“stack reconciliation”，现在称为“fiber reconciler”。
+
 fiber reconciler主要的特点是可以把更新流程拆分成一个一个的小的单元进行更新，并且可以中断，转而去执行高优先级的任务或者浏览器的动画渲染等，等主线程空闲了再继续执行更新。
 
 **React 15 的问题**
