@@ -395,7 +395,7 @@ data 参数是将要发送的 ArrayBufferView 或 Blob, DOMString 或者 FormDat
 
 **JS 数据类型：Object 中包含了哪几种类型？**
 
-    其中包含了Data、function、Array等。这三种是常规用的。
+    其中包含了Date、function、Array等。这三种是常规用的。
 
 **JS 数据类型：JS 的基本类型和引用类型有哪些呢？**
 
